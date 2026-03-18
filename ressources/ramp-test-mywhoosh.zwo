@@ -1,0 +1,61 @@
+<workout_file>
+    <author>mywhooshinfo.com</author>
+    <name>Ramp Test - MyWhoosh</name>
+    <description>
+        Welcome to the MyWhoosh Ramp test! 
+
+        Today we measure your Maximal Aerobic Power by ramping up the power every minute until exhaustion. We use your peak 1min power to calculate your FTP from this effort.
+
+        This testing method takes less time to complete than the traditional 20min FTP test, and it also removes the component of pacing from the effort. After completing a low-intensity 5min warmup, the power will increase each minute until you reach failure. It&#039;s not necessary to complete each step. Your FTP will be calculated from your peak 1min power produced.
+
+        It is important to remain seated for this test to provide accurate results. 
+        Be prepared; the test starts comfortably but quickly changes! 
+
+        NOTE: ERG mode MUST be on.
+    </description>
+    <sportType>
+        bike
+    </sportType>
+    <workout>
+        <SteadyState  Duration="300" Power="0.46000000834465">
+            <textevent timeoffset="10" message="Welcome to the MyWhoosh Ramp Test."/>
+            <textevent timeoffset="22" message="The aim of today&#039;s test is to measure your peak 1min power produced aerobically."/>
+            <textevent timeoffset="34" message="To do this, we ramp up the power each minute until you reach exhaustion."/>
+            <textevent timeoffset="46" message="Every second counts in this test."/>
+            <textevent timeoffset="60" message="Please note that you must remain seated for this test."/>
+            <textevent timeoffset="85" message="Ideally you would complete this test using ERG mode."/>
+            <textevent timeoffset="105" message="If your trainer does not support ERG mode, you will have to take care of ramping your power up each step."/>
+            <textevent timeoffset="120" message="The test protocol includes your warmup period."/>
+            <textevent timeoffset="135" message="The early stages of the test will feel very comfortable. But things quickly change!"/>
+            <textevent timeoffset="150" message="Go as far into your final level as you can. Every second counts!"/>
+            <textevent timeoffset="200" message="We want to see your best 1min aerobic power."/>
+            <textevent timeoffset="230" message="Find a nice rhythm and keep ticking off the levels in front of you."/>
+            <textevent timeoffset="250" message="When you do reach exhaustion you will be taken to the recovery effort."/>
+            <textevent timeoffset="270" message="The test should take somewhere between 10-20 minutes to complete."/>
+            <textevent timeoffset="290" message="The last 3-5 minutes will be what really counts!"/>
+        </SteadyState>
+        <SteadyState  Duration="60" Power="0.51999998092651"><textevent timeoffset="10" message="This should be extremely easy."/><textevent timeoffset="40" message="Remember, this is a seated test."/></SteadyState>
+        <SteadyState  Duration="60" Power="0.5799999833107"><textevent timeoffset="10" message="Enjoy these early steps."/><textevent timeoffset="30" message="This acts as part of your warmup still."/></SteadyState>
+        <SteadyState  Duration="60" Power="0.63999998569489"><textevent timeoffset="10" message="Find a comfortable position on the bike."/></SteadyState>
+        <SteadyState  Duration="60" Power="0.69999998807907"><textevent timeoffset="20" message="How are you feeling? Still comfortable?"/><textevent timeoffset="40" message="It&#039;s not often we test until failure. This is how we truly find our limits."/></SteadyState>
+        <SteadyState  Duration="60" Power="0.75999999046326"><textevent timeoffset="30" message="Keep your breathing relaxed and controlled."/></SteadyState>
+        <SteadyState  Duration="60" Power="0.81999999284744"><textevent timeoffset="10" message="You should be starting to feel the work now."/><textevent timeoffset="40" message="But still well in control. The serious work is just around the corner!"/></SteadyState>
+        <SteadyState  Duration="60" Power="0.87999999523163"><textevent timeoffset="20" message="Focus on staying smooth. Keep on top of your cadence."/></SteadyState>
+        <SteadyState  Duration="60" Power="0.93999999761581"><textevent timeoffset="10" message="We are moving up into threshold power territory now."/><textevent timeoffset="30" message="But Maximal Aerobic Power is well above this."/></SteadyState>
+        <SteadyState  Duration="60" Power="1"><textevent timeoffset="18" message="Now we are into the serious part. Really focus here."/><textevent timeoffset="30" message="Every second counts. Keep riding until you simply cannot go another revolution."/></SteadyState>
+        <SteadyState  Duration="60" Power="1.0599999427795"><textevent timeoffset="18" message="This is a very good effort."/><textevent timeoffset="50" message="Keep ticking each level off and move onto the next."/></SteadyState>
+        <SteadyState  Duration="60" Power="1.1200000047684"><textevent timeoffset="20" message="Stay relaxed and focus on cadence and power."/></SteadyState>
+        <SteadyState  Duration="60" Power="1.1799999475479"><textevent timeoffset="10" message="Into the hurt box now! Give me everything you have!"/><textevent timeoffset="50" message="That&#039;s another level done. Onto the next."/></SteadyState>
+        <SteadyState  Duration="60" Power="1.2400000095367"><textevent timeoffset="20" message="This is a fantastic effort! Keep on pushing."/></SteadyState>
+        <SteadyState  Duration="60" Power="1.2999999523163"><textevent timeoffset="18" message="This is big power! Keep the pressure on the pedals"/><textevent timeoffset="50" message="I know you have more in you!"/></SteadyState>
+        <SteadyState  Duration="60" Power="1.3600000143051"><textevent timeoffset="20" message="Find a little something extra here."/><textevent timeoffset="40" message="Nice quick cadence. Focus on that rhythm."/></SteadyState>
+        <SteadyState  Duration="60" Power="1.4199999570847"><textevent timeoffset="20" message="Come on! I know you have more in you!"/></SteadyState>
+        <SteadyState  Duration="60" Power="1.4800000190735"><textevent timeoffset="20" message="Just keep turning those pedals. This is a huge effort!"/><textevent timeoffset="50" message="There&#039;s the next level."/></SteadyState>
+        <SteadyState  Duration="60" Power="1.539999961853"><textevent timeoffset="20" message="Amazing! Another minute? You can do it!"/></SteadyState>
+        <SteadyState  Duration="60" Power="1.6000000238419"><textevent timeoffset="10" message="This is an incredible effort. Few riders make it to here!"/></SteadyState>
+        <SteadyState  Duration="60" Power="1.6599999666214"><textevent timeoffset="18" message="You are so good, we are almost out of steps!"/></SteadyState>
+        <SteadyState  Duration="60" Power="1.7200000286102"><textevent timeoffset="18" message="Your lungs are screaming for more air!"/></SteadyState>
+        <SteadyState  Duration="60" Power="1.7799999713898"><textevent timeoffset="18" message="This is all we have for you!"/><textevent timeoffset="40" message="If you have made it to here you need to either sign a pro contract or re-test next week starting with your FTP set a little higher."/></SteadyState>
+        <SteadyState  Duration="600" Power="0.46000000834465"><textevent timeoffset="30" message="Well done! That was huge effort."/><textevent timeoffset="60" message="You have just produced your 1min max aerobic power."/><textevent timeoffset="90" message="From this, we can accurately calculate your FTP."/><textevent timeoffset="120" message="This will allow you to benefit more from your training, by providing effective training zones."/><textevent timeoffset="150" message="There is an element of learning the ramp test."/><textevent timeoffset="180" message="Learning how to push ourselves to failure takes practice!"/><textevent timeoffset="190" message="But this session by itself is a good workout."/><textevent timeoffset="220" message="You can use it as a measure of your changing fitness."/><textevent timeoffset="230" message="You have produced some excellent results."/><textevent timeoffset="260" message="We have a very long cool down now."/><textevent timeoffset="290" message="Enjoy an easy spin after all the hard work you just completed."/><textevent timeoffset="320" message="At the completion of this workout you will be notified of any changes to your FTP."/><textevent timeoffset="350" message="Use today&#039;s test results to guide your next block of training."/><textevent timeoffset="380" message="What are your current training goals? Are you training for a specific event? For fitness?"/><textevent timeoffset="410" message="There are a range of training plans available in MyWhoosh to suit all types of riders."/><textevent timeoffset="510" message="Maybe have a recovery day tomorrow!"/><textevent timeoffset="540" message="If you feel you need a longer cool down feel free to stay in MyWhoosh and ride a little longer."/><textevent timeoffset="570" message="Good luck with your training and we hope to see you re-testing in 4-8 weeks."/></SteadyState>
+    </workout>
+</workout_file>
