@@ -12,7 +12,7 @@ int main() {
                                                         GRAVITY_CONSTANT, ROLLING_RESISTANCE_COEF);
 
     // User u = createUser();
-    User u("Yoann", 60.0, 170, "MALE", FRONTAL_AREA);
+    User u("Yoann", RIDER_WEIGHT, RIDER_HEIGHT, "MALE", FRONTAL_AREA);
 
     u.setBike(b);
 
@@ -98,7 +98,7 @@ void updateSpeedTask(User& u) {
         
         {
             lock_guard<mutex> lock(userMutex);
-            u.setCurrentSpeed(power);
+            u.setCurrentSpeed(power, TICK_INTERVAL_MS);
 
             cout << UPDATE_SPEED_STRING << "Speed: " << u.getCurrentSpeed() << " km/h" << endl;
         }

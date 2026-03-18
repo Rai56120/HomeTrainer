@@ -30,8 +30,10 @@ static constexpr double     DRIVE_TRAIN_LOSSES      = 0.03;
 static constexpr double     AIR_DENSITY             = 1.22601;
 static constexpr double     GRAVITY_CONSTANT        = 9.80665;
 static constexpr double     ROLLING_RESISTANCE_COEF = 0.005;
+static constexpr double     RIDER_WEIGHT            = 60.0;
+static constexpr double     RIDER_HEIGHT            = 170.0;
 
-static constexpr uint32_t   CURRENT_POWER = 500000U;
+static constexpr uint32_t   CURRENT_POWER = 500U;
 
 /*******************************************************/
 /*                   GLOBAL VARIABLES                  */

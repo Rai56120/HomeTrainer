@@ -1,12 +1,45 @@
 #include "User.hpp"
 
+double User::calculateInstantSpeed(const double power) {
+    const double CdARho = bike->getDragCoef() * frontalArea * bike->getAirDensity();
+    const double angle = atan(currentGradient / 100);
+    const double a = CdARho / 2;
+    const double b = bike->getHeadWind() * CdARho;
+    const double c = (bike->getGravity() * (weight + bike->getWeight()) * 
+                (sin(angle) + bike->getRollingResistCoef() * cos(angle))) +
+                (a * bike->getHeadWind() * bike->getHeadWind());
+
+    const double d = - (1 - bike->getDriveTrainLosses()) * power;
+
+    const double q = (3*a*c - b*b) / (9 *a*a);
+    const double r = (9*a*b*c - (27 *a*a*d) - (2*b*b*b)) / (54 * a*a*a);
+    const double s = cbrt(r + sqrt(q*q*q + r*r));
+    const double t = cbrt(r - sqrt(q*q*q + r*r));
+
+    return (s + t - (b / (3*a)) * 3.6);
+}
+
+double User::calculateAcceleration(const double power) {
+    const double CdARho = bike->getDragCoef() * frontalArea * bike->getAirDensity();
+    const double angle = atan(currentGradient / 100);
+    const double m = weight + bike->getWeight();
+    const double newtonConstant = 9.80665;
+
+    const double dragForce = 0.5 * CdARho * (currentSpeed + bike->getHeadWind()) * (currentSpeed + bike->getHeadWind()) / m;
+    const double gravityForce = newtonConstant * sin(angle);
+    const double rollingForce = newtonConstant * cos(angle) * bike->getRollingResistCoef();
+
+    double acceleration = bike->getDriveTrainLosses() * power - (dragForce + gravityForce + rollingForce);
+    
+    return acceleration;
+}
+
 User::User(const std::string username) : name(username) {
     weight = 60.0;
     height = 170;
     gender = MALE;
 
     currentSpeed = 0.0;
-    currentPower = 0.0;
 
     coveredDistance = 0.0;
 }
@@ -37,23 +70,12 @@ double User::getCurrentGradient() const {
 }
 
 //setters
-void User::setCurrentSpeed(const double power) {
-    const double CdARho = bike->getDragCoef() * frontalArea * bike->getAirDensity();
-    const double angle = atan(currentGradient / 100);
-    const double a = CdARho / 2;
-    const double b = bike->getHeadWind() * CdARho;
-    const double c = (bike->getGravity() * (weight + bike->getWeight()) * 
-                (sin(angle) + bike->getRollingResistCoef() * cos(angle))) +
-                (a * bike->getHeadWind() * bike->getHeadWind());
-
-    const double d = - (1 - bike->getDriveTrainLosses()) * power;
-
-    const double q = (3*a*c - b*b) / (9 *a*a);
-    const double r = (9*a*b*c - (27 *a*a*d) - (2*b*b*b)) / (54 * a*a*a);
-    const double s = cbrt(r + sqrt(q*q*q + r*r));
-    const double t = cbrt(r - sqrt(q*q*q + r*r));
-
-    currentSpeed = s + t - (b / (3*a)) * 3.6;
+void User::setCurrentSpeed(const double power, const uint32_t time_interval_ms) {
+    
+    // currentSpeed = calculateInstantSpeed(power);
+    double acceleration = calculateAcceleration(power);
+    currentSpeed += acceleration * time_interval_ms * 0.001 * 3.6;
+    std::cout << "acceleration = " << acceleration << "m/s2" << std::endl;
 }
 
 void User::setCurrentGradient(const double gradient) {
