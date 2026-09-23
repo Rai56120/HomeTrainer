@@ -1,8 +1,19 @@
 # To compile
 
-In the build folder
+## Manually
 
-`g++ -pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef -Werror -Wno-unused -o HomeTrainer.exe ..\src\main.cpp ..\lib\Bike.cpp ..\lib\Edge.cpp ..\lib\Route.cpp ..\lib\User.cpp ..\lib\Vertex.cpp && .\HomeTrainer.exe`
+In /build/
+
+`
+g++ -pedantic -Wall -Wextra -Wcast-align -Wcast-qual -Wctor-dtor-privacy -Wdisabled-optimization -Wformat=2 -Winit-self -Wlogical-op -Wmissing-declarations -Wmissing-include-dirs -Wnoexcept -Wold-style-cast -Woverloaded-virtual -Wredundant-decls -Wshadow -Wsign-conversion -Wsign-promo -Wstrict-null-sentinel -Wstrict-overflow=5 -Wswitch-default -Wundef -Werror -Wno-unused -o HomeTrainer.exe ..\src\main.cpp ..\lib\Bike.cpp ..\lib\Edge.cpp ..\lib\Route.cpp ..\lib\User.cpp ..\lib\Vertex.cpp && .\HomeTrainer.exe
+`
+
+## With CMakeLists
+
+```
+cmake -S . -B build -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
+cmake --build build
+```
 
 # Sources
 

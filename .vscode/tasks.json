@@ -1,0 +1,99 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "cmake: configure",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "-S", "${workspaceFolder}",
+                "-B", "${workspaceFolder}/build",
+                "-G", "MinGW Makefiles",
+                "-DCMAKE_BUILD_TYPE=Release"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [],
+            "group": "build",
+            "detail": "Configure the project with CMake using the MinGW Makefiles generator."
+        },
+        {
+            "label": "cmake: build",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build", "${workspaceFolder}/build",
+                "--config", "Release",
+                "-j"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOn": "cmake: configure",
+            "problemMatcher": ["$gcc"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "Build HomeTrainer using the configured build system (default build task)."
+        },
+        {
+            "label": "cmake: clean",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "--build", "${workspaceFolder}/build",
+                "--target", "clean"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [],
+            "detail": "Remove compiled objects and binaries, keep CMake cache."
+        },
+        {
+            "label": "cmake: nuke build dir",
+            "type": "shell",
+            "command": "powershell",
+            "args": [
+                "-NoProfile",
+                "-Command",
+                "Remove-Item -Recurse -Force '${workspaceFolder}/build' -ErrorAction SilentlyContinue"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "problemMatcher": [],
+            "detail": "Delete the entire build/ directory (use if generator or cache gets stuck)."
+        },
+        {
+            "label": "cmake: rebuild from scratch",
+            "type": "shell",
+            "command": "cmake",
+            "args": [
+                "-S", "${workspaceFolder}",
+                "-B", "${workspaceFolder}/build",
+                "-G", "MinGW Makefiles",
+                "-DCMAKE_BUILD_TYPE=Release"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOn": "cmake: nuke build dir",
+            "problemMatcher": [],
+            "detail": "Wipe build/ then fully reconfigure and build."
+        },
+        {
+            "label": "run: HomeTrainer",
+            "type": "shell",
+            "command": "${workspaceFolder}/build/HomeTrainer.exe",
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOn": "cmake: build",
+            "problemMatcher": [],
+            "detail": "Build if needed, then run HomeTrainer.exe."
+        }
+    ]
+}
