@@ -15,9 +15,11 @@ double Edge::calculateDistance(const Vertex& v1, const Vertex& v2) const {
     const double dLon = (v2.getLong() - v1.getLong()) * M_PI / 180.0;
     const double lat1 = v1.getLat() * M_PI / 180.0;
     
-    const double a = sin(dLat / 2.0) * sin(dLat / 2.0) +
-                     cos(lat1) * cos(lat1 + dLat) * sin(dLon / 2.0) * sin(dLon / 2.0);
-    const double groundDist = 2.0 * R * asin(sqrt(a));
+    const double haversine = sin(dLat / 2.0) * sin(dLat / 2.0) +
+                             cos(lat1) * cos(lat1 + dLat) *
+                             sin(dLon / 2.0) * sin(dLon / 2.0);
+    const double clampedHaversine = std::clamp(haversine, 0.0, 1.0);
+    const double groundDist = 2.0 * R * asin(sqrt(clampedHaversine));
     
     // 3D: Pythagorean with altitude diff
     const double altDiff = v2.getAlt() - v1.getAlt();

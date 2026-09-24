@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <stdexcept>
 #include <iostream>
+#include <algorithm>
 
 #include "Vertex.hpp"
 

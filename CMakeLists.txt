@@ -4,6 +4,8 @@ project(HomeTrainer VERSION 1.0 DESCRIPTION "Virtual Cycling Engine")
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+enable_testing()
+
 # Common warnings shared by all configs
 set(WARNINGS "-pedantic -Wall -Wextra \
     -Wcast-align -Wcast-qual -Wctor-dtor-privacy \
@@ -36,3 +38,15 @@ add_executable(HomeTrainer ${SOURCES})
 
 target_include_directories(HomeTrainer PRIVATE ${CMAKE_SOURCE_DIR}/lib)
 target_link_libraries(HomeTrainer PRIVATE Threads::Threads)
+
+add_executable(HomeTrainerPhysicsTests
+    tests/PhysicsTests.cpp
+    lib/Bike.cpp
+    lib/Edge.cpp
+    lib/Route.cpp
+    lib/User.cpp
+    lib/Vertex.cpp
+)
+
+target_include_directories(HomeTrainerPhysicsTests PRIVATE ${CMAKE_SOURCE_DIR}/lib)
+add_test(NAME HomeTrainerPhysicsTests COMMAND HomeTrainerPhysicsTests)

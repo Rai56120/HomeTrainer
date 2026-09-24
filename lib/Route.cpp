@@ -63,7 +63,7 @@ void Route::calculateElevation(const Edge& e) {
         double elevation = endVertex.getAlt() - startVertex.getAlt();
 
         if(elevation >= 0) { elevationPlus += elevation; }
-        else { elevationMinus += elevation; }
+        else { elevationMinus -= elevation; }
     }
     catch (const std::out_of_range& err) {
         std::cerr << "Vertex ID out of bounds during elevation calculation" << std::endl;

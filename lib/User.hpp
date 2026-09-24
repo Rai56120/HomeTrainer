@@ -6,6 +6,7 @@
 #include <cmath>
 #include <memory>
 #include <cstdint>
+#include <algorithm>
 
 #include "Bike.hpp"
 

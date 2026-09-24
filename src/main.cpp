@@ -6,7 +6,7 @@
 int main() {
     cout << fixed << setprecision(4);
 
-    Route circuit("../ressources/ninian_bourg.gpx");
+    Route circuit("./resources/ninian_bourg.gpx");
     std::shared_ptr<Bike> b = std::make_shared<Bike>(   "Colnago Y1RS", BIKE_WEIGHT, DRAG_COEFFICIENT, 
                                                         DRIVE_TRAIN_LOSSES, AIR_DENSITY, 
                                                         GRAVITY_CONSTANT, ROLLING_RESISTANCE_COEF);
@@ -55,6 +55,7 @@ void updateDistanceTask(User& u, const Route& circuit) {
     }
 
     Edge currentEdge = circuit.getEdge(currentEdgeId);
+    u.setCurrentGradient(currentEdge.getGradient());
 
     while(running.load()) {
         nextTick += chrono::milliseconds(TICK_INTERVAL_MS);
@@ -64,23 +65,26 @@ void updateDistanceTask(User& u, const Route& circuit) {
             
             //Calculate duration
             const double delta = u.getCurrentSpeed() * TIME_FACTOR;
-            
+            const double routeDistance = circuit.getTotalDistance();
+            const double remainingDistance = routeDistance - u.getCoveredDistance();
+            const double distanceToAdd = std::clamp(delta, 0.0, remainingDistance);
+
             //Calculate coveredDistance
-            u.addToCoveredDistance(delta);
+            u.addToCoveredDistance(distanceToAdd);
 
             //Get current gradient and Edge
-            if(u.getCoveredDistance() >= currentEdge.getStartKilometer() + (currentEdge.getLength() / 1000.0)) {
+            while(currentEdgeId + 1 < circuit.getAllSegments().size() &&
+                  u.getCoveredDistance() >= currentEdge.getStartKilometer() +
+                  (currentEdge.getLength() / 1000.0)) {
                 currentEdgeId++;
+                currentEdge = circuit.getEdge(currentEdgeId);
+                u.setCurrentGradient(currentEdge.getGradient());
+                cout << UPDATE_DISTANCE_STRING << "Gradient: " << u.getCurrentGradient() << "%" << endl;
+            }
 
-                if(currentEdgeId < circuit.getAllSegments().size()) {
-                    currentEdge = circuit.getEdge(currentEdgeId);
-                    u.setCurrentGradient(currentEdge.getGradient());
-                    cout << UPDATE_DISTANCE_STRING << "Gradient: " << u.getCurrentGradient() << "%" << endl;
-                } 
-                else if(u.getCoveredDistance() >= circuit.getTotalDistance()){
-                    running.store(false);
-                    cout << UPDATE_DISTANCE_STRING << "Circuit finished !" << endl;
-                }
+            if(u.getCoveredDistance() >= routeDistance) {
+                running.store(false);
+                cout << UPDATE_DISTANCE_STRING << "Circuit finished !" << endl;
             }
 
             cout << UPDATE_DISTANCE_STRING << "Covered distance: " << u.getCoveredDistance() << "km" << endl;

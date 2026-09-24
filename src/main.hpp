@@ -1,5 +1,6 @@
 #include <thread>
 #include <chrono>
+#include <algorithm>
 #include <mutex>
 #include <atomic>
 #include <iostream>
@@ -31,7 +32,7 @@ static constexpr double     AIR_DENSITY             = 1.22601;
 static constexpr double     GRAVITY_CONSTANT        = 9.80665;
 static constexpr double     ROLLING_RESISTANCE_COEF = 0.005;
 
-static constexpr uint32_t   CURRENT_POWER = 500000U;
+static constexpr uint32_t   CURRENT_POWER = 500U;
 
 /*******************************************************/
 /*                   GLOBAL VARIABLES                  */
