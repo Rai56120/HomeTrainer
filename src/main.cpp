@@ -1,112 +1,25 @@
 #include "main.hpp"
 
-/*******************************************************/
-/*                        MAIN                         */
-/*******************************************************/
 int main() {
     cout << fixed << setprecision(4);
 
     Route circuit("./resources/ninian_bourg.gpx");
-    std::shared_ptr<Bike> b = std::make_shared<Bike>(   "Colnago Y1RS", BIKE_WEIGHT, DRAG_COEFFICIENT, 
-                                                        DRIVE_TRAIN_LOSSES, AIR_DENSITY, 
-                                                        GRAVITY_CONSTANT, ROLLING_RESISTANCE_COEF);
+    std::shared_ptr<Bike> bike = std::make_shared<Bike>(
+        "Colnago Y1RS", BIKE_WEIGHT, DRAG_COEFFICIENT, DRIVE_TRAIN_LOSSES,
+        AIR_DENSITY, GRAVITY_CONSTANT, ROLLING_RESISTANCE_COEF);
 
-    // User u = createUser();
-    User u("Yoann", 60.0, 170, "MALE", FRONTAL_AREA);
-
-    u.setBike(b);
+    User user("Yoann", 60.0, 170, "MALE", FRONTAL_AREA);
+    user.setBike(bike);
 
     circuit.printRoute();
-    u.printInfos();
+    user.printInfos();
 
-
-    thread tDistance(updateDistanceTask, ref(u), cref(circuit));
-    thread tSpeed(updateSpeedTask, ref(u));
-
-    cout << MAIN_STRING << "Starting threads" << endl;
-
-    if(tDistance.joinable()) { 
-        cout<< MAIN_STRING << "thread tDistance started at id #" 
-            << tDistance.get_id() << endl;
-        
-        tDistance.join();
-    }
-    if(tSpeed.joinable()) { 
-        cout<< MAIN_STRING<< "thread tSpeed started at id #" 
-            << tSpeed.get_id() << endl;
-        
-        tSpeed.join();
-    }
+    Simulation simulation(user, circuit);
+    simulation.setPower(CURRENT_POWER);
+    simulation.start();
+    simulation.join();
 
     return EXIT_SUCCESS;
-}
-
-/*******************************************************/
-/*                     FUNCTIONS                       */
-/*******************************************************/
-void updateDistanceTask(User& u, const Route& circuit) {
-    auto nextTick = chrono::steady_clock::now();
-    size_t currentEdgeId = 0;
-
-    if(circuit.getAllSegments().empty()) {
-        cerr << UPDATE_DISTANCE_STRING << "Route is empty" << endl;
-        running.store(false);
-        return;
-    }
-
-    Edge currentEdge = circuit.getEdge(currentEdgeId);
-    u.setCurrentGradient(currentEdge.getGradient());
-
-    while(running.load()) {
-        nextTick += chrono::milliseconds(TICK_INTERVAL_MS);
-        
-        {
-            lock_guard<mutex> lock(userMutex);
-            
-            //Calculate duration
-            const double delta = u.getCurrentSpeed() * TIME_FACTOR;
-            const double routeDistance = circuit.getTotalDistance();
-            const double remainingDistance = routeDistance - u.getCoveredDistance();
-            const double distanceToAdd = std::clamp(delta, 0.0, remainingDistance);
-
-            //Calculate coveredDistance
-            u.addToCoveredDistance(distanceToAdd);
-
-            //Get current gradient and Edge
-            while(currentEdgeId + 1 < circuit.getAllSegments().size() &&
-                  u.getCoveredDistance() >= currentEdge.getStartKilometer() +
-                  (currentEdge.getLength() / 1000.0)) {
-                currentEdgeId++;
-                currentEdge = circuit.getEdge(currentEdgeId);
-                u.setCurrentGradient(currentEdge.getGradient());
-                cout << UPDATE_DISTANCE_STRING << "Gradient: " << u.getCurrentGradient() << "%" << endl;
-            }
-
-            if(u.getCoveredDistance() >= routeDistance) {
-                running.store(false);
-                cout << UPDATE_DISTANCE_STRING << "Circuit finished !" << endl;
-            }
-
-            cout << UPDATE_DISTANCE_STRING << "Covered distance: " << u.getCoveredDistance() << "km" << endl;
-        }
-        //attendre 500ms
-        this_thread::sleep_until(nextTick);
-    }
-}
-
-void updateSpeedTask(User& u) {
-    double power = CURRENT_POWER;
-
-    while(running.load()) {
-        this_thread::sleep_for(chrono::milliseconds(TICK_INTERVAL_MS));
-        
-        {
-            lock_guard<mutex> lock(userMutex);
-            u.setCurrentSpeed(power);
-
-            cout << UPDATE_SPEED_STRING << "Speed: " << u.getCurrentSpeed() << " km/h" << endl;
-        }
-    }
 }
 
 User createUser() {
