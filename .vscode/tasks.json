@@ -94,6 +94,22 @@
             "dependsOn": "cmake: build",
             "problemMatcher": [],
             "detail": "Build if needed, then run HomeTrainer.exe."
+        },
+        {
+            "label": "cmake: test",
+            "type": "shell",
+            "command": "ctest",
+            "args": [
+                "--test-dir", "${workspaceFolder}/build",
+                "--output-on-failure"
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}"
+            },
+            "dependsOn": "cmake: build",
+            "problemMatcher": [],
+            "group": "test",
+            "detail": "Build if needed, then run the CTest suite."
         }
     ]
 }

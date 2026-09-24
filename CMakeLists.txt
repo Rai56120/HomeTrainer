@@ -6,6 +6,15 @@ set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 enable_testing()
 
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
+include(FetchContent)
+FetchContent_Declare(
+    doctest
+    URL https://github.com/doctest/doctest/archive/refs/tags/v2.4.11.zip
+    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+)
+FetchContent_MakeAvailable(doctest)
+
 # Common warnings shared by all configs
 set(WARNINGS "-pedantic -Wall -Wextra \
     -Wcast-align -Wcast-qual -Wctor-dtor-privacy \
@@ -25,28 +34,37 @@ set(CMAKE_CXX_FLAGS_RELEASE "${WARNINGS} -O2 -Werror")
 
 find_package(Threads REQUIRED)
 
-set(SOURCES
-    src/main.cpp
+set(CORE_SOURCES
     lib/Bike.cpp
     lib/Edge.cpp
     lib/Vertex.cpp
     lib/Route.cpp
     lib/User.cpp
+    src/Simulation.cpp
 )
 
-add_executable(HomeTrainer ${SOURCES})
+add_library(HomeTrainerCore ${CORE_SOURCES})
+target_include_directories(HomeTrainerCore PUBLIC
+    ${CMAKE_SOURCE_DIR}/lib
+    ${CMAKE_SOURCE_DIR}/src
+)
+
+add_executable(HomeTrainer src/main.cpp)
 
 target_include_directories(HomeTrainer PRIVATE ${CMAKE_SOURCE_DIR}/lib)
-target_link_libraries(HomeTrainer PRIVATE Threads::Threads)
+target_link_libraries(HomeTrainer PRIVATE HomeTrainerCore Threads::Threads)
 
 add_executable(HomeTrainerPhysicsTests
     tests/PhysicsTests.cpp
-    lib/Bike.cpp
-    lib/Edge.cpp
-    lib/Route.cpp
-    lib/User.cpp
-    lib/Vertex.cpp
+    tests/BikeTests.cpp
+    tests/VertexTests.cpp
+    tests/EdgeTests.cpp
+    tests/RouteTests.cpp
+    tests/SimulationTests.cpp
 )
 
 target_include_directories(HomeTrainerPhysicsTests PRIVATE ${CMAKE_SOURCE_DIR}/lib)
-add_test(NAME HomeTrainerPhysicsTests COMMAND HomeTrainerPhysicsTests)
+target_link_libraries(HomeTrainerPhysicsTests PRIVATE HomeTrainerCore doctest::doctest)
+
+include(${doctest_SOURCE_DIR}/scripts/cmake/doctest.cmake)
+doctest_discover_tests(HomeTrainerPhysicsTests)
