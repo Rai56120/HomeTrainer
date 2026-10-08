@@ -13,7 +13,17 @@ FetchContent_Declare(
     URL https://github.com/doctest/doctest/archive/refs/tags/v2.4.11.zip
     DOWNLOAD_EXTRACT_TIMESTAMP TRUE
 )
-FetchContent_MakeAvailable(doctest)
+FetchContent_Declare(
+    httplib
+    URL https://github.com/yhirose/cpp-httplib/archive/refs/tags/v0.15.3.zip
+    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+)
+FetchContent_Declare(
+    nlohmann_json
+    URL https://github.com/nlohmann/json/archive/refs/tags/v3.11.3.zip
+    DOWNLOAD_EXTRACT_TIMESTAMP TRUE
+)
+FetchContent_MakeAvailable(doctest httplib nlohmann_json)
 
 # Common warnings shared by all configs
 set(WARNINGS "-pedantic -Wall -Wextra \
@@ -50,9 +60,22 @@ target_include_directories(HomeTrainerCore PUBLIC
 )
 
 add_executable(HomeTrainer src/main.cpp)
+target_sources(HomeTrainer PRIVATE src/ApiServer.cpp)
 
-target_include_directories(HomeTrainer PRIVATE ${CMAKE_SOURCE_DIR}/lib)
-target_link_libraries(HomeTrainer PRIVATE HomeTrainerCore Threads::Threads)
+target_include_directories(HomeTrainer PRIVATE
+    ${CMAKE_SOURCE_DIR}/lib
+    ${CMAKE_SOURCE_DIR}/src
+)
+target_link_libraries(HomeTrainer PRIVATE
+    HomeTrainerCore
+    Threads::Threads
+    httplib::httplib
+    nlohmann_json::nlohmann_json
+)
+target_compile_options(HomeTrainer PRIVATE -Wno-strict-overflow)
+target_compile_definitions(HomeTrainer PRIVATE
+    HOME_TRAINER_RESOURCE_DIR="${CMAKE_SOURCE_DIR}/resources"
+)
 
 add_executable(HomeTrainerPhysicsTests
     tests/PhysicsTests.cpp
@@ -61,10 +84,25 @@ add_executable(HomeTrainerPhysicsTests
     tests/EdgeTests.cpp
     tests/RouteTests.cpp
     tests/SimulationTests.cpp
+    tests/ApiTests.cpp
+    src/ApiServer.cpp
 )
 
-target_include_directories(HomeTrainerPhysicsTests PRIVATE ${CMAKE_SOURCE_DIR}/lib)
-target_link_libraries(HomeTrainerPhysicsTests PRIVATE HomeTrainerCore doctest::doctest)
+target_include_directories(HomeTrainerPhysicsTests PRIVATE
+    ${CMAKE_SOURCE_DIR}/lib
+    ${CMAKE_SOURCE_DIR}/src
+)
+target_link_libraries(HomeTrainerPhysicsTests PRIVATE
+    HomeTrainerCore
+    doctest::doctest
+    httplib::httplib
+    nlohmann_json::nlohmann_json
+)
+target_compile_options(HomeTrainerPhysicsTests PRIVATE -Wno-strict-overflow)
+target_compile_definitions(HomeTrainerPhysicsTests PRIVATE
+    HOME_TRAINER_RESOURCE_DIR="${CMAKE_SOURCE_DIR}/resources"
+    HOME_TRAINER_TEST_FIXTURE_DIR="${CMAKE_SOURCE_DIR}/tests/fixtures"
+)
 
 include(${doctest_SOURCE_DIR}/scripts/cmake/doctest.cmake)
 doctest_discover_tests(HomeTrainerPhysicsTests)

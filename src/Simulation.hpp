@@ -31,6 +31,7 @@ public:
     void start();
     void pause();
     void stop();
+    void reset();
     void join();
 
     SimulationState getState() const;
@@ -40,6 +41,7 @@ private:
     void advanceRoute();
 
     User user;
+    User initialUser;
     const Route& route;
     double powerWatts = 0.0;
     std::size_t currentEdgeId = 0;

@@ -17,6 +17,11 @@ int main() {
     Simulation simulation(user, circuit);
     simulation.setPower(CURRENT_POWER);
     simulation.start();
+
+    ApiServer apiServer(simulation);
+    apiServer.run("127.0.0.1", 8080);
+
+    simulation.stop();
     simulation.join();
 
     return EXIT_SUCCESS;

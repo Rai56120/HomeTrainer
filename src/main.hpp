@@ -3,6 +3,7 @@
 #include <iomanip>
 
 #include "Route.hpp"
+#include "ApiServer.hpp"
 #include "Simulation.hpp"
 #include "User.hpp"
 
