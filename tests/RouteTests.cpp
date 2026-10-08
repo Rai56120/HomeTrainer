@@ -5,15 +5,17 @@
 #include "Route.hpp"
 
 TEST_CASE("missing route file produces an empty route") {
-    Route route("../tests/fixtures/does-not-exist.gpx");
+    const std::string fixtureDir = HOME_TRAINER_TEST_FIXTURE_DIR;
+    Route route(fixtureDir + "/does-not-exist.gpx");
 
     CHECK(route.getAllSegments().empty());
     CHECK(route.getTotalDistance() == doctest::Approx(0.0));
 }
 
 TEST_CASE("empty and one-point GPX files produce no edges") {
-    Route emptyRoute("../tests/fixtures/empty.gpx");
-    Route onePointRoute("../tests/fixtures/one-point.gpx");
+    const std::string fixtureDir = HOME_TRAINER_TEST_FIXTURE_DIR;
+    Route emptyRoute(fixtureDir + "/empty.gpx");
+    Route onePointRoute(fixtureDir + "/one-point.gpx");
 
     CHECK(emptyRoute.getAllSegments().empty());
     CHECK(onePointRoute.getAllSegments().empty());
@@ -22,7 +24,7 @@ TEST_CASE("empty and one-point GPX files produce no edges") {
 }
 
 TEST_CASE("two-point GPX produces one finite flat edge") {
-    Route route("../tests/fixtures/flat-two-points.gpx");
+    Route route(std::string(HOME_TRAINER_TEST_FIXTURE_DIR) + "/flat-two-points.gpx");
 
     REQUIRE(route.getAllSegments().size() == 1);
     const Edge& edge = route.getAllSegments().front();

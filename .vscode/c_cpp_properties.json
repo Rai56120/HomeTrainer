@@ -1,0 +1,21 @@
+{
+    "configurations": [
+        {
+            "name": "MinGW Release",
+            "compilerPath": "C:/Developpement/msys64/mingw64/bin/g++.exe",
+            "cStandard": "c17",
+            "cppStandard": "c++17",
+            "includePath": [
+                "${workspaceFolder}/lib",
+                "${workspaceFolder}/src",
+                "${workspaceFolder}/build/_deps/httplib-src",
+                "${workspaceFolder}/build/_deps/nlohmann_json-src/include"
+            ],
+            "defines": [
+                "NOMINMAX"
+            ],
+            "intelliSenseMode": "windows-gcc-x64"
+        }
+    ],
+    "version": 4
+}
