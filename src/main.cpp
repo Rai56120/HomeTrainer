@@ -3,7 +3,7 @@
 int main() {
     cout << fixed << setprecision(4);
 
-    Route circuit("./resources/ninian_bourg.gpx");
+    Route circuit(std::string(HOME_TRAINER_RESOURCE_DIR) + "/ninian_bourg.gpx");
     std::shared_ptr<Bike> bike = std::make_shared<Bike>(
         "Colnago Y1RS", BIKE_WEIGHT, DRAG_COEFFICIENT, DRIVE_TRAIN_LOSSES,
         AIR_DENSITY, GRAVITY_CONSTANT, ROLLING_RESISTANCE_COEF);

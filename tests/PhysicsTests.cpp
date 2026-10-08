@@ -68,7 +68,7 @@ TEST_CASE("missing bike produces zero speed") {
 }
 
 TEST_CASE("bundled GPX produces finite route geometry") {
-    Route route("../resources/ninian_bourg.gpx");
+    Route route(std::string(HOME_TRAINER_RESOURCE_DIR) + "/ninian_bourg.gpx");
     const auto& segments = route.getAllSegments();
     REQUIRE(segments.size() > 1);
     CHECK(std::isfinite(segments.front().getGradient()));

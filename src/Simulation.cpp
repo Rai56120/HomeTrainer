@@ -5,7 +5,7 @@
 #include <cmath>
 
 Simulation::Simulation(User userValue, const Route& routeValue)
-    : user(std::move(userValue)), route(routeValue) {
+    : user(userValue), initialUser(std::move(userValue)), route(routeValue) {
     if(route.getAllSegments().empty()) {
         finished = true;
     } else {
@@ -66,6 +66,19 @@ void Simulation::stop() {
         paused = false;
     }
     condition.notify_all();
+}
+
+void Simulation::reset() {
+    std::lock_guard<std::mutex> lock(mutex);
+    user = initialUser;
+    currentEdgeId = 0;
+    finished = route.getAllSegments().empty();
+    paused = true;
+    stopRequested = false;
+
+    if(!finished) {
+        user.setCurrentGradient(route.getEdge(0).getGradient());
+    }
 }
 
 void Simulation::join() {

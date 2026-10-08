@@ -19,7 +19,7 @@ User createSimulationUser() {
 }
 
 TEST_CASE("Simulation tick advances deterministic distance") {
-    Route route("../tests/fixtures/flat-two-points.gpx");
+    Route route(std::string(HOME_TRAINER_TEST_FIXTURE_DIR) + "/flat-two-points.gpx");
     Simulation simulation(createSimulationUser(), route);
     simulation.setPower(500.0);
 
@@ -36,7 +36,7 @@ TEST_CASE("Simulation tick advances deterministic distance") {
 }
 
 TEST_CASE("Simulation clamps at route completion") {
-    Route route("../tests/fixtures/flat-two-points.gpx");
+    Route route(std::string(HOME_TRAINER_TEST_FIXTURE_DIR) + "/flat-two-points.gpx");
     Simulation simulation(createSimulationUser(), route);
     simulation.setPower(500.0);
 
