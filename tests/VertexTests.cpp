@@ -2,6 +2,7 @@
 
 #include "Vertex.hpp"
 
+/** @brief Verifies that vertex getters return the ID and stored coordinates. */
 TEST_CASE("Vertex exposes its coordinate data") {
     Vertex vertex(42, 48.001, -2.486, 45.5);
 

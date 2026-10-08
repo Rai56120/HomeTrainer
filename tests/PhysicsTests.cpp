@@ -10,11 +10,13 @@
 
 namespace {
 
+/** @brief Creates a bike configured with the shared physics-test parameters. */
 std::shared_ptr<Bike> createBike() {
     return std::make_shared<Bike>(
         "Test bike", 7.54, 0.88, 0.03, 1.22601, 9.80665, 0.005);
 }
 
+/** @brief Creates a physics-test user assigned to the standard test bike. */
 User createUser() {
     User user("Test user", 60.0, 170, "MALE", 0.40);
     user.setBike(createBike());
@@ -23,6 +25,7 @@ User createUser() {
 
 }
 
+/** @brief Checks that 500 watts produces a finite cycling speed on level ground. */
 TEST_CASE("flat-road speed at 500 watts") {
     User flatUser = createUser();
     flatUser.setCurrentGradient(0.0);
@@ -33,6 +36,7 @@ TEST_CASE("flat-road speed at 500 watts") {
     CHECK(flatSpeed < 50.0);
 }
 
+/** @brief Checks that climbing reduces speed at equal rider power. */
 TEST_CASE("uphill speed is lower than flat speed") {
     User flatUser = createUser();
     flatUser.setCurrentGradient(0.0);
@@ -46,6 +50,7 @@ TEST_CASE("uphill speed is lower than flat speed") {
     CHECK(climbUser.getCurrentSpeed() < flatSpeed);
 }
 
+/** @brief Checks that gravity can produce a finite positive descent speed at zero power. */
 TEST_CASE("zero power on a descent remains finite and positive") {
     User descentUser = createUser();
     descentUser.setCurrentGradient(-5.0);
@@ -54,6 +59,7 @@ TEST_CASE("zero power on a descent remains finite and positive") {
     CHECK(descentUser.getCurrentSpeed() > 0.0);
 }
 
+/** @brief Checks that zero power on level ground results in zero speed. */
 TEST_CASE("zero power on flat ground stops") {
     User stoppedUser = createUser();
     stoppedUser.setCurrentGradient(0.0);
@@ -61,12 +67,14 @@ TEST_CASE("zero power on flat ground stops") {
     CHECK(stoppedUser.getCurrentSpeed() == 0.0);
 }
 
+/** @brief Checks that speed remains zero when no bike is assigned. */
 TEST_CASE("missing bike produces zero speed") {
     User userWithoutBike("No bike", 60.0, 170, "MALE", 0.40);
     userWithoutBike.setCurrentSpeed(500.0);
     CHECK(userWithoutBike.getCurrentSpeed() == 0.0);
 }
 
+/** @brief Checks that the bundled GPX creates finite, consistent route geometry. */
 TEST_CASE("bundled GPX produces finite route geometry") {
     Route route(std::string(HOME_TRAINER_RESOURCE_DIR) + "/ninian_bourg.gpx");
     const auto& segments = route.getAllSegments();

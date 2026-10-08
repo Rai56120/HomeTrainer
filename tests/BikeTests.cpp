@@ -2,6 +2,7 @@
 
 #include "Bike.hpp"
 
+/** @brief Verifies that a bike retains all configured physical parameters. */
 TEST_CASE("Bike stores physical parameters") {
     Bike bike("Test bike", 7.54, 0.88, 0.03, 1.22601, 9.80665, 0.005);
 

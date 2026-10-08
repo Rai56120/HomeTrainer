@@ -110,6 +110,30 @@
             "problemMatcher": [],
             "group": "test",
             "detail": "Build if needed, then run the CTest suite."
+        },
+        {
+            "label": "frontend: install",
+            "type": "shell",
+            "command": "npm",
+            "args": ["install"],
+            "options": {
+                "cwd": "${workspaceFolder}/frontend"
+            },
+            "problemMatcher": [],
+            "detail": "Install Angular frontend dependencies."
+        },
+        {
+            "label": "frontend: start",
+            "type": "shell",
+            "command": "npm",
+            "args": ["start"],
+            "options": {
+                "cwd": "${workspaceFolder}/frontend"
+            },
+            "dependsOn": "frontend: install",
+            "isBackground": true,
+            "problemMatcher": [],
+            "detail": "Start Angular on localhost:4200 with the C++ API proxy."
         }
     ]
 }

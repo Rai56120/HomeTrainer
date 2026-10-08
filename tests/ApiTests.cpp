@@ -15,6 +15,7 @@
 
 namespace {
 
+/** @brief Creates a user with the standard test bike for API integration tests. */
 User createApiUser() {
     User user("API user", 60.0, 170, "MALE", 0.40);
     user.setBike(std::make_shared<Bike>(
@@ -24,6 +25,7 @@ User createApiUser() {
 
 }
 
+/** @brief Verifies that simulation snapshots serialize with stable API field names. */
 TEST_CASE("simulation state serializes to stable JSON fields") {
     const SimulationState state{25.0, 250.0, 2.5, 1.2, 10.0, true, false};
     const nlohmann::json payload = serializeSimulationState(state);
@@ -37,6 +39,7 @@ TEST_CASE("simulation state serializes to stable JSON fields") {
     CHECK(payload.at("finished") == false);
 }
 
+/** @brief Verifies power-command parsing accepts valid values and rejects invalid bodies. */
 TEST_CASE("power command validates JSON and bounds") {
     httplib::Request request;
     double watts = 0.0;
@@ -57,6 +60,7 @@ TEST_CASE("power command validates JSON and bounds") {
     CHECK_FALSE(parsePowerCommand(request, watts, error));
 }
 
+/** @brief Exercises the health, state, and power-control HTTP endpoints end to end. */
 TEST_CASE("REST server exposes health, state, and power control") {
     Route route(std::string(HOME_TRAINER_TEST_FIXTURE_DIR) + "/flat-two-points.gpx");
     Simulation simulation(createApiUser(), route);

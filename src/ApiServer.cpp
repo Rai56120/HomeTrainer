@@ -6,6 +6,11 @@ namespace {
 
 constexpr const char* jsonContentType = "application/json";
 
+/**
+ * @brief Serializes a JSON value into an HTTP response with the JSON content type.
+ * @param response HTTP response to populate.
+ * @param value JSON value to serialize.
+ */
 void setJson(httplib::Response& response, const nlohmann::json& value) {
     response.set_content(value.dump(), jsonContentType);
 }

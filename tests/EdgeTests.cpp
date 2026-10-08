@@ -6,6 +6,7 @@
 #include "Edge.hpp"
 #include "Vertex.hpp"
 
+/** @brief Verifies that edge length is calculated from geographic coordinates. */
 TEST_CASE("Edge calculates geographic distance") {
     std::map<uint32_t, Vertex> vertices{
         {1, Vertex(1, 48.0, -2.0, 0.0)},
@@ -18,6 +19,7 @@ TEST_CASE("Edge calculates geographic distance") {
     CHECK(edge.getLength() == doctest::Approx(111.2).epsilon(0.01));
 }
 
+/** @brief Verifies edge gradients preserve the sign of elevation changes. */
 TEST_CASE("Edge calculates ascent and descent gradients") {
     std::map<uint32_t, Vertex> vertices{
         {1, Vertex(1, 48.0, -2.0, 10.0)},
@@ -38,6 +40,7 @@ TEST_CASE("Edge calculates ascent and descent gradients") {
     CHECK(descent.getGradient() < 0.0);
 }
 
+/** @brief Verifies a zero-length edge has a zero gradient without invalid arithmetic. */
 TEST_CASE("Edge handles a zero-length segment") {
     std::map<uint32_t, Vertex> vertices{
         {1, Vertex(1, 48.0, -2.0, 10.0)},

@@ -15,6 +15,17 @@ cmake -S . -B build -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
 cmake --build build
 ```
 
+## API documentation
+
+Install Doxygen, then configure and build the documentation target:
+
+```
+cmake -S . -B build -G "MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release
+cmake --build build --target docs
+```
+
+The generated HTML documentation is written to `build/doxygen/html/index.html`.
+
 # Sources
 
 [gpx documentation](https://www.topografix.com/GPX/1/1/gpx.xsd)

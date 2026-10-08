@@ -9,6 +9,7 @@
 
 namespace {
 
+/** @brief Creates a simulation-test user assigned to the standard test bike. */
 User createSimulationUser() {
     User user("Simulation user", 60.0, 170, "MALE", 0.40);
     user.setBike(std::make_shared<Bike>(
@@ -18,6 +19,7 @@ User createSimulationUser() {
 
 }
 
+/** @brief Verifies a fixed simulation tick advances distance without finishing early. */
 TEST_CASE("Simulation tick advances deterministic distance") {
     Route route(std::string(HOME_TRAINER_TEST_FIXTURE_DIR) + "/flat-two-points.gpx");
     Simulation simulation(createSimulationUser(), route);
@@ -35,6 +37,7 @@ TEST_CASE("Simulation tick advances deterministic distance") {
     CHECK_FALSE(afterTick.finished);
 }
 
+/** @brief Verifies simulation distance is clamped at the route end. */
 TEST_CASE("Simulation clamps at route completion") {
     Route route(std::string(HOME_TRAINER_TEST_FIXTURE_DIR) + "/flat-two-points.gpx");
     Simulation simulation(createSimulationUser(), route);

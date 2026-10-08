@@ -1,5 +1,6 @@
 #include "main.hpp"
 
+/** @brief Starts the route simulation and serves its control API until the server exits. */
 int main() {
     cout << fixed << setprecision(4);
 
@@ -27,6 +28,7 @@ int main() {
     return EXIT_SUCCESS;
 }
 
+/** @brief Prompts for rider details and returns a configured user. */
 User createUser() {
     string name;
     uint16_t weight;

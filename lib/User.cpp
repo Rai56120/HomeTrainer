@@ -2,6 +2,13 @@
 
 namespace {
 
+/**
+ * @brief Finds the largest non-negative real root of a quadratic equation.
+ * @param coefficientA Quadratic coefficient.
+ * @param coefficientB Linear coefficient.
+ * @param coefficientC Constant coefficient.
+ * @return The largest non-negative real root, or zero when none is available.
+ */
 double largestNonnegativeQuadraticRoot(const double coefficientA,
                                        const double coefficientB,
                                        const double coefficientC) {
@@ -37,6 +44,14 @@ double largestNonnegativeQuadraticRoot(const double coefficientA,
     return largestRoot;
 }
 
+/**
+ * @brief Finds the largest non-negative real root of a cubic equation.
+ * @param coefficientA Cubic coefficient.
+ * @param coefficientB Quadratic coefficient.
+ * @param coefficientC Linear coefficient.
+ * @param coefficientD Constant coefficient.
+ * @return The largest non-negative real root, or zero when none is available.
+ */
 double largestNonnegativeCubicRoot(const double coefficientA,
                                    const double coefficientB,
                                    const double coefficientC,

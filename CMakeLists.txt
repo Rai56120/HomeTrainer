@@ -1,6 +1,18 @@
 cmake_minimum_required(VERSION 3.10)
 project(HomeTrainer VERSION 1.0 DESCRIPTION "Virtual Cycling Engine")
 
+find_package(Doxygen QUIET)
+if(DOXYGEN_FOUND)
+    add_custom_target(docs
+        COMMAND ${DOXYGEN_EXECUTABLE} ${CMAKE_SOURCE_DIR}/Doxyfile
+        WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
+        COMMENT "Generating HomeTrainer API documentation"
+        VERBATIM
+    )
+else()
+    message(STATUS "Doxygen not found; the docs target will not be available")
+endif()
+
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 

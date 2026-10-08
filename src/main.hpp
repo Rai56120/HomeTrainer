@@ -21,4 +21,8 @@ static constexpr double     GRAVITY_CONSTANT        = 9.80665;
 static constexpr double     ROLLING_RESISTANCE_COEF = 0.005;
 
 static constexpr uint32_t   CURRENT_POWER = 500U;
+/**
+ * @brief Prompts for valid rider details and constructs a user with default frontal area.
+ * @return A user populated from console input.
+ */
 User createUser();
