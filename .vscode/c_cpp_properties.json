@@ -1,10 +1,11 @@
 {
     "configurations": [
         {
-            "name": "MinGW Release",
-            "compilerPath": "C:/Developpement/msys64/mingw64/bin/g++.exe",
+            "name": "MinGW",
+            "compilerPath": "g++.exe",
             "cStandard": "c17",
             "cppStandard": "c++17",
+            "compileCommands": "${workspaceFolder}/build/compile_commands.json",
             "includePath": [
                 "${workspaceFolder}/lib",
                 "${workspaceFolder}/src",

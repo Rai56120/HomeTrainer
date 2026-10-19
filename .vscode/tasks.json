@@ -9,7 +9,8 @@
                 "-S", "${workspaceFolder}",
                 "-B", "${workspaceFolder}/build",
                 "-G", "MinGW Makefiles",
-                "-DCMAKE_BUILD_TYPE=Release"
+                "-DCMAKE_BUILD_TYPE=Release",
+                "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
@@ -53,40 +54,25 @@
             "detail": "Remove compiled objects and binaries, keep CMake cache."
         },
         {
-            "label": "cmake: nuke build dir",
-            "type": "shell",
-            "command": "powershell",
-            "args": [
-                "-NoProfile",
-                "-Command",
-                "Remove-Item -Recurse -Force '${workspaceFolder}/build' -ErrorAction SilentlyContinue"
-            ],
-            "options": {
-                "cwd": "${workspaceFolder}"
-            },
-            "problemMatcher": [],
-            "detail": "Delete the entire build/ directory (use if generator or cache gets stuck)."
-        },
-        {
-            "label": "cmake: rebuild from scratch",
+            "label": "cmake: rebuild",
             "type": "shell",
             "command": "cmake",
             "args": [
-                "-S", "${workspaceFolder}",
-                "-B", "${workspaceFolder}/build",
-                "-G", "MinGW Makefiles",
-                "-DCMAKE_BUILD_TYPE=Release"
+                "--build", "${workspaceFolder}/build",
+                "--config", "Release",
+                "-j"
             ],
             "options": {
                 "cwd": "${workspaceFolder}"
             },
-            "dependsOn": "cmake: nuke build dir",
-            "problemMatcher": [],
-            "detail": "Wipe build/ then fully reconfigure and build."
+            "dependsOn": ["cmake: configure", "cmake: clean"],
+            "dependsOrder": "sequence",
+            "problemMatcher": ["$gcc"],
+            "detail": "Reconfigure, clean compiled outputs, then rebuild all targets."
         },
         {
             "label": "run: HomeTrainer",
-            "type": "shell",
+            "type": "process",
             "command": "${workspaceFolder}/build/HomeTrainer.exe",
             "options": {
                 "cwd": "${workspaceFolder}"
@@ -110,30 +96,6 @@
             "problemMatcher": [],
             "group": "test",
             "detail": "Build if needed, then run the CTest suite."
-        },
-        {
-            "label": "frontend: install",
-            "type": "shell",
-            "command": "npm",
-            "args": ["install"],
-            "options": {
-                "cwd": "${workspaceFolder}/frontend"
-            },
-            "problemMatcher": [],
-            "detail": "Install Angular frontend dependencies."
-        },
-        {
-            "label": "frontend: start",
-            "type": "shell",
-            "command": "npm",
-            "args": ["start"],
-            "options": {
-                "cwd": "${workspaceFolder}/frontend"
-            },
-            "dependsOn": "frontend: install",
-            "isBackground": true,
-            "problemMatcher": [],
-            "detail": "Start Angular on localhost:4200 with the C++ API proxy."
         }
     ]
 }
