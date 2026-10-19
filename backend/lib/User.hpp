@@ -66,6 +66,8 @@ public:
      * Without an assigned bike, current speed is set to zero.
      */
     void setCurrentSpeed(const double power);
+    /** @brief Sets current speed and power to zero without recalculating physics. */
+    void resetCurrentMotion();
     /**
      * @brief Sets the current signed road gradient as a percentage.
      * @param gradient Road gradient, positive uphill and negative downhill.
@@ -76,6 +78,10 @@ public:
      * @param d Distance to add in kilometers.
      */
     void addToCoveredDistance(const double d);
+    /**
+     * @brief Reset the user's covered distance.
+     */
+    void resetCoveredDistance();
     /**
      * @brief Assigns the bike parameters used for speed calculations.
      * @param b Shared bike instance, or an empty pointer to clear the assignment.

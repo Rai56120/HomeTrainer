@@ -167,6 +167,11 @@ void User::setCurrentSpeed(const double power) {
     currentSpeed = speedMs * 3.6;
 }
 
+void User::resetCurrentMotion() {
+    currentPower = 0.0;
+    currentSpeed = 0.0;
+}
+
 void User::setCurrentGradient(const double gradient) {
     currentGradient = gradient;
 }
@@ -175,6 +180,9 @@ void User::addToCoveredDistance(const double d) {
     coveredDistance += d;
 }
 
+void User::resetCoveredDistance() {
+    coveredDistance = 0.0;
+}
 void User::setBike(std::shared_ptr<Bike> b) {
     bike = b;
 }

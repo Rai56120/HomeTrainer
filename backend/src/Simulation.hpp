@@ -67,6 +67,8 @@ public:
 private:
     /** @brief Runs timed simulation updates until stop is requested. */
     void run();
+    /** @brief Advances state while the simulation mutex is held. */
+    void tickLocked(double deltaSeconds);
     /** @brief Updates the current route segment and marks the simulation finished at the end. */
     void advanceRoute();
 

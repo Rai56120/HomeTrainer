@@ -29,6 +29,14 @@ void Simulation::tick(const double deltaSeconds) {
     }
 
     std::lock_guard<std::mutex> lock(mutex);
+    if(finished || stopRequested) {
+        return;
+    }
+
+    tickLocked(deltaSeconds);
+}
+
+void Simulation::tickLocked(const double deltaSeconds) {
     if(finished) {
         return;
     }
@@ -57,6 +65,8 @@ void Simulation::start() {
 void Simulation::pause() {
     std::lock_guard<std::mutex> lock(mutex);
     paused = true;
+    powerWatts = 0.0;
+    user.resetCurrentMotion();
 }
 
 void Simulation::stop() {
@@ -64,6 +74,14 @@ void Simulation::stop() {
         std::lock_guard<std::mutex> lock(mutex);
         stopRequested = true;
         paused = false;
+        powerWatts = 0.0;
+        user.resetCurrentMotion();
+        user.resetCoveredDistance();
+        currentEdgeId = 0;
+        finished = route.getAllSegments().empty();
+        if(!finished) {
+            user.setCurrentGradient(route.getEdge(0).getGradient());
+        }
     }
     condition.notify_all();
 }
@@ -105,21 +123,24 @@ void Simulation::run() {
     auto previous = Clock::now();
 
     while(true) {
-        {
-            std::unique_lock<std::mutex> lock(mutex);
-            condition.wait(lock, [this] {
-                return stopRequested || !paused;
-            });
-            if(stopRequested) {
-                return;
-            }
+        std::unique_lock<std::mutex> lock(mutex);
+        const bool wasPaused = paused;
+        condition.wait(lock, [this] {
+            return stopRequested || !paused;
+        });
+        if(stopRequested) {
+            return;
         }
 
+        if(wasPaused) {
+            previous = Clock::now();
+        }
         const auto now = Clock::now();
         const double deltaSeconds =
             std::chrono::duration<double>(now - previous).count();
         previous = now;
-        tick(deltaSeconds);
+        tickLocked(deltaSeconds);
+        lock.unlock();
         std::this_thread::sleep_for(std::chrono::milliseconds(50));
     }
 }

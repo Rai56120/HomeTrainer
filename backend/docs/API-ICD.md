@@ -107,8 +107,8 @@ Each operation is a `POST` request with no required body. Each returns
 | Endpoint | Effect |
 | --- | --- |
 | `POST /api/simulation/start` | Starts or resumes simulation updates unless the route is finished. |
-| `POST /api/simulation/pause` | Pauses updates; the simulation can be resumed with `start`. |
-| `POST /api/simulation/stop` | Requests the simulation worker to exit. This is not equivalent to `pause`; do not rely on `start` resuming after `stop`. |
+| `POST /api/simulation/pause` | Pauses updates and sets `speedKmh` and `powerWatts` to zero while preserving route progress; the simulation can be resumed with `start`. |
+| `POST /api/simulation/stop` | Requests the simulation worker to exit, resets route progress, and sets `speedKmh`, `powerWatts`, and `distanceKm` to zero. This is not equivalent to `pause`; do not rely on `start` resuming after `stop`. |
 | `POST /api/simulation/reset` | Restores the rider and route position, restores the power value captured when the API server was created, and pauses the simulation. |
 
 ## 5. Error Handling
