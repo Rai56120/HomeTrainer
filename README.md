@@ -17,6 +17,8 @@ cmake --build build
 
 ## API documentation
 
+See [API-ICD.md](API-ICD.md) for the HTTP interface contract.
+
 Install Doxygen, then configure and build the documentation target:
 
 ```
