@@ -18,6 +18,7 @@ cmake --build build
 ## API documentation
 
 See [API-ICD.md](docs/API-ICD.md) for the HTTP interface contract.
+
 See [TESTING.md](docs/TESTING.md) for an overview of the test suite and how to run it.
 
 Install Doxygen, then configure and build the documentation target:

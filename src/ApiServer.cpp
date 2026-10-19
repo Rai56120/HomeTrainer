@@ -44,6 +44,9 @@ bool parsePowerCommand(const httplib::Request& request, double& watts, std::stri
             return false;
         }
         return true;
+    } catch(const nlohmann::json::out_of_range&) {
+        error = "watts must be a finite non-negative number";
+        return false;
     } catch(const std::exception&) {
         error = "request body must be valid JSON";
         return false;
@@ -100,6 +103,7 @@ void ApiServer::configureRoutes() {
 
     server.Post("/api/simulation/reset", [this](const httplib::Request&, httplib::Response& response) {
         simulation.reset();
+        simulation.setPower(0);
         respondWithState(response);
     });
 }

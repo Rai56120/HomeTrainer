@@ -56,6 +56,10 @@ TEST_CASE("power command validates JSON and bounds") {
     request.body = R"({"power":250})";
     CHECK_FALSE(parsePowerCommand(request, watts, error));
 
+    request.body = R"({"watts":1e999})";
+    CHECK_FALSE(parsePowerCommand(request, watts, error));
+    CHECK(error == "watts must be a finite non-negative number");
+
     request.body = "not json";
     CHECK_FALSE(parsePowerCommand(request, watts, error));
 }
@@ -64,6 +68,7 @@ TEST_CASE("power command validates JSON and bounds") {
 TEST_CASE("REST server exposes health, state, and power control") {
     Route route(std::string(HOME_TRAINER_TEST_FIXTURE_DIR) + "/flat-two-points.gpx");
     Simulation simulation(createApiUser(), route);
+    simulation.setPower(175.0);
     ApiServer apiServer(simulation);
     std::thread serverThread([&apiServer] {
         apiServer.run("127.0.0.1", 18080);
@@ -96,6 +101,18 @@ TEST_CASE("REST server exposes health, state, and power control") {
         "/api/control/power", R"({"watts":-1})", "application/json");
     REQUIRE(invalid);
     CHECK(invalid->status == 400);
+
+    const auto overflow = client.Post(
+        "/api/control/power", R"({"watts":1e999})", "application/json");
+    REQUIRE(overflow);
+    CHECK(overflow->status == 400);
+    CHECK(nlohmann::json::parse(overflow->body).at("error") ==
+          "watts must be a finite non-negative number");
+
+    const auto reset = client.Post("/api/simulation/reset", "", "application/json");
+    REQUIRE(reset);
+    REQUIRE(reset->status == 200);
+    CHECK(nlohmann::json::parse(reset->body).at("powerWatts") == doctest::Approx(0.0));
 
     apiServer.stop();
     serverThread.join();
