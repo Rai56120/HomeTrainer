@@ -6,8 +6,8 @@
             "type": "shell",
             "command": "cmake",
             "args": [
-                "-S", "${workspaceFolder}",
-                "-B", "${workspaceFolder}/build",
+                "-S", "${workspaceFolder}/backend",
+                "-B", "${workspaceFolder}/backend/build",
                 "-G", "MinGW Makefiles",
                 "-DCMAKE_BUILD_TYPE=Release",
                 "-DCMAKE_EXPORT_COMPILE_COMMANDS=ON"
@@ -24,7 +24,7 @@
             "type": "shell",
             "command": "cmake",
             "args": [
-                "--build", "${workspaceFolder}/build",
+                "--build", "${workspaceFolder}/backend/build",
                 "--config", "Release",
                 "-j"
             ],
@@ -44,7 +44,7 @@
             "type": "shell",
             "command": "cmake",
             "args": [
-                "--build", "${workspaceFolder}/build",
+                "--build", "${workspaceFolder}/backend/build",
                 "--target", "clean"
             ],
             "options": {
@@ -58,7 +58,7 @@
             "type": "shell",
             "command": "cmake",
             "args": [
-                "--build", "${workspaceFolder}/build",
+                "--build", "${workspaceFolder}/backend/build",
                 "--config", "Release",
                 "-j"
             ],
@@ -73,9 +73,9 @@
         {
             "label": "run: HomeTrainer",
             "type": "process",
-            "command": "${workspaceFolder}/build/HomeTrainer.exe",
+            "command": "${workspaceFolder}/backend/build/HomeTrainer.exe",
             "options": {
-                "cwd": "${workspaceFolder}"
+                "cwd": "${workspaceFolder}/backend"
             },
             "dependsOn": "cmake: build",
             "problemMatcher": [],
@@ -86,11 +86,11 @@
             "type": "shell",
             "command": "ctest",
             "args": [
-                "--test-dir", "${workspaceFolder}/build",
+                "--test-dir", "${workspaceFolder}/backend/build",
                 "--output-on-failure"
             ],
             "options": {
-                "cwd": "${workspaceFolder}"
+                "cwd": "${workspaceFolder}/backend"
             },
             "dependsOn": "cmake: build",
             "problemMatcher": [],

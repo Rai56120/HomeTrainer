@@ -5,12 +5,12 @@
             "compilerPath": "g++.exe",
             "cStandard": "c17",
             "cppStandard": "c++17",
-            "compileCommands": "${workspaceFolder}/build/compile_commands.json",
+            "compileCommands": "${workspaceFolder}/backend/build/compile_commands.json",
             "includePath": [
-                "${workspaceFolder}/lib",
-                "${workspaceFolder}/src",
-                "${workspaceFolder}/build/_deps/httplib-src",
-                "${workspaceFolder}/build/_deps/nlohmann_json-src/include"
+                "${workspaceFolder}/backend/lib",
+                "${workspaceFolder}/backend/src",
+                "${workspaceFolder}/backend/build/_deps/httplib-src",
+                "${workspaceFolder}/backend/build/_deps/nlohmann_json-src/include"
             ],
             "defines": [
                 "NOMINMAX"
