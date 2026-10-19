@@ -1,0 +1,244 @@
+<section class="page setup-page">
+  <div class="page-heading">
+    <div>
+      <p class="eyebrow"><span>01</span> CONFIGURATION</p>
+      <h1>Build your ride.</h1>
+      <p class="page-intro">Set your effort and fine-tune the ride profile before you roll out.</p>
+    </div>
+    <div class="heading-note">
+      <span class="note-mark" aria-hidden="true">i</span>
+      <span>Changes are local unless marked <strong>API READY</strong>.</span>
+    </div>
+  </div>
+
+  <form [formGroup]="form" class="setup-grid" (submit)="$event.preventDefault()">
+    <div class="setup-main">
+      <section class="panel route-panel" aria-labelledby="route-title">
+        <div class="panel-heading">
+          <div class="section-title">
+            <span class="section-index">A</span>
+            <div>
+              <h2 id="route-title">Your circuit</h2>
+              <p>Choose a route file for your setup.</p>
+            </div>
+          </div>
+          <span class="status-tag future">API PENDING</span>
+        </div>
+
+        <label class="route-drop" for="route-file">
+          <span class="upload-icon" aria-hidden="true">↑</span>
+          <span class="route-copy">
+            <strong>{{ routeFileName() ?? 'Select a GPX circuit' }}</strong>
+            <small>{{
+              routeFileName()
+                ? 'Selected on this device only'
+                : 'GPX files · Route upload is not available yet'
+            }}</small>
+          </span>
+          <span class="browse-button">Browse files</span>
+          <input
+            id="route-file"
+            type="file"
+            accept=".gpx,application/gpx+xml,application/xml,text/xml"
+            (change)="onRouteFileSelected($event)"
+          />
+        </label>
+        @if (routeError()) {
+          <p class="field-error" role="alert">{{ routeError() }}</p>
+        }
+        <p class="integration-note">
+          The API currently starts with its configured default route. This file is not uploaded or
+          used by the simulation.
+        </p>
+      </section>
+
+      <section class="panel effort-panel" aria-labelledby="effort-title">
+        <div class="panel-heading">
+          <div class="section-title">
+            <span class="section-index">B</span>
+            <div>
+              <h2 id="effort-title">Rider effort</h2>
+              <p>Set the power sent to the trainer.</p>
+            </div>
+          </div>
+          <span class="status-tag ready">API READY</span>
+        </div>
+
+        <div class="power-readout">
+          <div>
+            <span class="field-caption">TARGET POWER</span>
+            <strong>{{ form.controls.powerWatts.value | number: '1.0-1' }}<span>W</span></strong>
+          </div>
+          <span class="power-symbol" aria-hidden="true">⌁</span>
+        </div>
+        <label class="visually-hidden" for="power-slider">Power in watts</label>
+        <input
+          class="power-slider"
+          id="power-slider"
+          type="range"
+          min="0"
+          max="500.5"
+          step="0.1"
+          formControlName="powerWatts"
+          aria-describedby="power-range"
+        />
+        <div class="range-labels" id="power-range"><span>0 W</span><span>500.5 W</span></div>
+        <div class="power-actions">
+          <p class="integration-note">
+            Applied to the simulation through <code>POST /api/control/power</code>.
+          </p>
+          <button
+            class="button button-secondary"
+            type="button"
+            (click)="applyPower()"
+            [disabled]="applyingPower()"
+          >
+            {{ applyingPower() ? 'Applying…' : 'Apply power' }}
+          </button>
+        </div>
+        @if (powerFeedback()) {
+          <p class="feedback" role="status">{{ powerFeedback() }}</p>
+        }
+      </section>
+
+      <section class="panel user-panel" aria-labelledby="user-title">
+        <div class="panel-heading">
+          <div class="section-title">
+            <span class="section-index">C</span>
+            <div>
+              <h2 id="user-title">Your profile</h2>
+              <p>Set your rider details.</p>
+            </div>
+          </div>
+          <span class="status-tag future">API PENDING</span>
+        </div>
+
+        <p class="integration-note parameter-note">
+          Rider details are kept in this form only and are not sent to the current API.
+        </p>
+
+        <div class="parameter-grid">
+          <label class="number-field">
+            <span>Name</span>
+            <input type="text" maxlength="80" formControlName="userName" />
+          </label>
+          <label class="number-field">
+            <span>Weight <small>kg</small></span>
+            <input type="number" min="1" max="300" step="0.1" formControlName="userWeightKg" />
+            <small class="field-range">1–300 kg</small>
+          </label>
+          <label class="number-field">
+            <span>Height <small>cm</small></span>
+            <input type="number" min="50" max="250" step="1" formControlName="userHeightCm" />
+            <small class="field-range">50–250 cm</small>
+          </label>
+          <label class="number-field">
+            <span>Gender</span>
+            <select formControlName="userGender">
+              <option value="MALE">Male</option>
+              <option value="FEMALE">Female</option>
+            </select>
+          </label>
+          <label class="number-field">
+            <span>Frontal area <small>m²</small></span>
+            <input type="number" min="0" max="2" step="0.01" formControlName="frontalAreaM2" />
+            <small class="field-range">0–2.00 m²</small>
+          </label>
+        </div>
+      </section>
+
+      <section class="panel parameters-panel" aria-labelledby="bike-title">
+        <div class="panel-heading">
+          <div class="section-title">
+            <span class="section-index">D</span>
+            <div>
+              <h2 id="bike-title">Bike &amp; environment</h2>
+              <p>Preview your equipment and conditions.</p>
+            </div>
+          </div>
+          <span class="status-tag future">API PENDING</span>
+        </div>
+
+        <p class="integration-note parameter-note">
+          These values are saved in this form only; the current API does not accept bike or
+          environment settings.
+        </p>
+
+        <div class="parameter-grid">
+          <label class="number-field">
+            <span>Bike weight <small>kg</small></span>
+            <input type="number" min="0" max="20" step="0.01" formControlName="bikeWeightKg" />
+            <small class="field-range">0–20.00 kg</small>
+          </label>
+          <label class="number-field">
+            <span>Drag coefficient <small>CdA</small></span>
+            <input type="number" min="0" max="1.5" step="0.01" formControlName="dragCoefficient" />
+            <small class="field-range">0–1.50</small>
+          </label>
+          <label class="number-field">
+            <span>Drive train losses <small>%</small></span>
+            <input
+              type="number"
+              min="0"
+              max="100"
+              step="0.1"
+              formControlName="drivetrainLossPercent"
+            />
+            <small class="field-range">0–100%</small>
+          </label>
+          <label class="number-field">
+            <span>Rolling resistance <small>Crr</small></span>
+            <input
+              type="number"
+              min="0"
+              max="0.5"
+              step="0.001"
+              formControlName="rollingResistance"
+            />
+            <small class="field-range">0–0.500</small>
+          </label>
+          <label class="number-field">
+            <span>Air density <small>kg/m³</small></span>
+            <input type="number" min="0" max="10" step="0.01" formControlName="airDensity" />
+            <small class="field-range">0–10.00 kg/m³</small>
+          </label>
+          <label class="number-field">
+            <span>Headwind <small>m/s</small></span>
+            <input type="number" step="0.1" formControlName="headwindMs" />
+            <small class="field-range">Negative values represent tailwind</small>
+          </label>
+        </div>
+      </section>
+    </div>
+
+    <aside class="setup-aside">
+      <div class="aside-card">
+        <p class="eyebrow">READY WHEN YOU ARE</p>
+        <div class="route-preview" aria-hidden="true">
+          <span class="route-pin"></span>
+          <span class="route-line"></span>
+          <span class="route-finish"></span>
+          <span class="route-contour contour-one"></span>
+          <span class="route-contour contour-two"></span>
+        </div>
+        <h2>Make it a good one.</h2>
+        <p>
+          Power can be sent to the live simulator. User, route, bike and environment setup will be
+          wired when the API supports it.
+        </p>
+        <a class="button button-primary" routerLink="/simulation">
+          Go to simulation <span aria-hidden="true">→</span>
+        </a>
+      </div>
+
+      <div class="api-card">
+        <span class="api-card-icon" aria-hidden="true">↗</span>
+        <div>
+          <strong>Live API controls</strong>
+          <p>Power, ride state and simulation actions.</p>
+        </div>
+        <span class="status-dot" aria-hidden="true"></span>
+      </div>
+    </aside>
+  </form>
+</section>

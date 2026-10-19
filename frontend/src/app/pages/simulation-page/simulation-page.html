@@ -1,0 +1,185 @@
+<section class="page ride-page">
+  <div class="page-heading">
+    <div>
+      <p class="eyebrow"><span>02</span> LIVE SESSION</p>
+      <h1>Ride dashboard.</h1>
+      <p class="page-intro">Your ride, live from the HomeTrainer simulation.</p>
+    </div>
+    <a class="back-link" routerLink="/setup"><span aria-hidden="true">←</span> Ride setup</a>
+  </div>
+
+  @if (errorMessage()) {
+    <div class="api-error" role="alert">
+      <span aria-hidden="true">!</span>
+      <p>{{ errorMessage() }}</p>
+    </div>
+  }
+
+  <section class="panel ride-progress-panel" aria-labelledby="progress-title">
+    <div class="progress-heading">
+      <div>
+        <p class="field-caption">ROUTE PROGRESS</p>
+        <h2 id="progress-title">
+          @if (state; as ride) {
+            {{ ride.distanceKm | number: '1.2-2' }}
+            <span>/ {{ ride.routeDistanceKm | number: '1.2-2' }} km</span>
+          } @else {
+            Waiting for simulation…
+          }
+        </h2>
+      </div>
+      <span class="ride-state" [class.active]="state?.running" [class.finished]="state?.finished">
+        <span class="status-dot" aria-hidden="true"></span>
+        {{
+          state?.finished
+            ? 'FINISHED'
+            : state?.running
+              ? 'IN MOTION'
+              : stopped()
+                ? 'STOPPED'
+                : 'PAUSED'
+        }}
+      </span>
+    </div>
+
+    <div
+      class="route-progress"
+      role="progressbar"
+      aria-label="Simulation route progress"
+      [attr.aria-valuenow]="progressPercent"
+      aria-valuemin="0"
+      aria-valuemax="100"
+    >
+      <div class="progress-track">
+        <div class="progress-fill" [style.width.%]="progressPercent"></div>
+        <span class="rider-marker" [style.left.%]="progressPercent" aria-label="Rider position">
+          <span aria-hidden="true">▲</span>
+        </span>
+      </div>
+      <div class="route-endpoints">
+        <span>START</span>
+        <span>{{ state?.routeDistanceKm ?? 0 | number: '1.2-2' }} KM</span>
+        <span>FINISH</span>
+      </div>
+    </div>
+  </section>
+
+  <section class="metrics-grid" aria-label="Current ride metrics">
+    <article class="metric-card speed-card">
+      <div class="metric-label"><span class="metric-glyph" aria-hidden="true">↗</span> SPEED</div>
+      <strong>
+        @if (state; as ride) {
+          {{ ride.speedKmh | number: '1.1-1' }}
+        } @else {
+          —
+        }
+        <small>km/h</small>
+      </strong>
+      <span class="metric-foot">CURRENT PACE</span>
+    </article>
+    <article class="metric-card">
+      <div class="metric-label">
+        <span class="metric-glyph" aria-hidden="true">⌁</span> GRADIENT
+      </div>
+      <strong>
+        @if (state; as ride) {
+          {{ ride.gradientPercent | number: '1.1-1' }}
+        } @else {
+          —
+        }
+        <small>%</small>
+      </strong>
+      <span class="metric-foot">CURRENT ROAD</span>
+    </article>
+    <article class="metric-card">
+      <div class="metric-label">
+        <span class="metric-glyph" aria-hidden="true">⇢</span> DISTANCE
+      </div>
+      <strong>
+        @if (state; as ride) {
+          {{ ride.distanceKm | number: '1.2-2' }}
+        } @else {
+          —
+        }
+        <small>km</small>
+      </strong>
+      <span class="metric-foot">TRAVELED</span>
+    </article>
+    <article class="metric-card">
+      <div class="metric-label"><span class="metric-glyph" aria-hidden="true">⌖</span> TO GO</div>
+      <strong>
+        @if (state) {
+          {{ distanceRemainingKm | number: '1.2-2' }}
+        } @else {
+          —
+        }
+        <small>km</small>
+      </strong>
+      <span class="metric-foot">REMAINING DISTANCE</span>
+    </article>
+    <article class="metric-card power-card">
+      <div class="metric-label"><span class="metric-glyph" aria-hidden="true">ϟ</span> POWER</div>
+      <strong>
+        @if (state; as ride) {
+          {{ ride.powerWatts | number: '1.0-1' }}
+        } @else {
+          —
+        }
+        <small>W</small>
+      </strong>
+      <span class="metric-foot">RIDER OUTPUT</span>
+    </article>
+  </section>
+
+  <section class="panel controls-panel" aria-labelledby="controls-title">
+    <div class="controls-copy">
+      <p class="field-caption">SESSION CONTROL</p>
+      <h2 id="controls-title">Your ride, your rhythm.</h2>
+      <p>Control is sent directly to the running simulation.</p>
+    </div>
+    <div class="control-buttons">
+      <button
+        class="button button-start"
+        type="button"
+        (click)="control('start')"
+        [disabled]="pending() || state?.running || state?.finished || stopped()"
+      >
+        <span aria-hidden="true">▶</span> {{ state?.running ? 'Riding' : 'Start ride' }}
+      </button>
+      <button
+        class="button button-quiet"
+        type="button"
+        (click)="control('pause')"
+        [disabled]="pending() || !state?.running"
+      >
+        <span aria-hidden="true">Ⅱ</span> Pause
+      </button>
+      <button
+        class="button button-quiet"
+        type="button"
+        (click)="control('stop')"
+        [disabled]="pending() || stopped() || state?.finished"
+      >
+        <span aria-hidden="true">■</span> Stop
+      </button>
+      <button
+        class="button button-reset"
+        type="button"
+        (click)="control('reset')"
+        [disabled]="pending()"
+      >
+        <span aria-hidden="true">↺</span> Reset
+      </button>
+    </div>
+    @if (stopped()) {
+      <p class="stop-note">
+        The API stop operation exits its worker. Reset clears the ride, but restart the backend
+        before starting another session.
+      </p>
+    }
+  </section>
+
+  <p class="api-footnote">
+    Live data from <code>GET /api/state</code> · Controls use the documented simulation endpoints.
+  </p>
+</section>

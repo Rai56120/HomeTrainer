@@ -1,0 +1,57 @@
+@use './app/pages/setup-page/setup-page';
+@use './app/pages/simulation-page/simulation-page';
+
+:root {
+  color-scheme: dark;
+  font-family: 'Segoe UI', Tahoma, sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  --background: #171c19;
+  --surface: #1d2420;
+  --surface-raised: #232b26;
+  --text: #f2f4ee;
+  --muted: #9ba49d;
+  --line: #343d37;
+  --accent: #caef59;
+  --radius: 9px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(ellipse at 48% -40%, rgb(202 239 89 / 7%), transparent 55%), var(--background);
+  color: var(--text);
+}
+
+button,
+input {
+  font: inherit;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+code {
+  font-family: Consolas, monospace;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

@@ -1,0 +1,38 @@
+<div class="app-shell">
+  <header class="topbar">
+    <a class="brand" routerLink="/setup" aria-label="HomeTrainer setup">
+      <span class="brand-mark" aria-hidden="true">HT</span>
+      <span class="brand-copy">
+        <strong>HOME TRAINER</strong>
+        <small>INDOOR CYCLING LAB</small>
+      </span>
+    </a>
+
+    <nav class="main-nav" aria-label="Main navigation">
+      <a routerLink="/setup" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <span class="nav-index">01</span> Setup
+      </a>
+      <a routerLink="/simulation" routerLinkActive="active">
+        <span class="nav-index">02</span> Ride
+      </a>
+    </nav>
+
+    <div
+      class="connection-indicator"
+      [class.online]="api.connection() === 'connected'"
+      [class.offline]="api.connection() === 'offline'"
+    >
+      <span class="status-dot" aria-hidden="true"></span>
+      <span>{{ connectionLabel }}</span>
+    </div>
+  </header>
+
+  <main>
+    <router-outlet />
+  </main>
+
+  <footer class="site-footer">
+    <span>HOME TRAINER <span aria-hidden="true">/</span> SIMULATION CONSOLE</span>
+    <span>LOCAL CONTROL SYSTEM <span aria-hidden="true">•</span> API v1</span>
+  </footer>
+</div>

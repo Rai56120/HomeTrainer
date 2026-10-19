@@ -1,0 +1,353 @@
+app-simulation-page {
+  display: block;
+
+  .ride-page {
+    max-width: 1180px;
+    margin: 0 auto;
+  }
+
+  .page-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: end;
+    gap: 2rem;
+    margin-bottom: 2rem;
+  }
+
+  .page-heading h1 {
+    margin: 0.55rem 0 0;
+    font-size: clamp(2.1rem, 5vw, 3.4rem);
+    letter-spacing: -0.065em;
+    line-height: 1;
+  }
+
+  .page-intro {
+    margin: 0.8rem 0 0;
+    color: var(--muted);
+  }
+
+  .eyebrow,
+  .field-caption {
+    margin: 0;
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.15em;
+  }
+
+  .eyebrow span {
+    margin-right: 0.4rem;
+    color: var(--accent);
+  }
+
+  .back-link {
+    color: var(--muted);
+    font-size: 0.76rem;
+    text-decoration: none;
+  }
+
+  .back-link:hover {
+    color: var(--accent);
+  }
+
+  .api-error {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 1rem;
+    padding: 0.8rem 1rem;
+    border: 1px solid rgb(255 144 125 / 35%);
+    border-radius: 7px;
+    background: rgb(255 144 125 / 8%);
+    color: #ffad9d;
+  }
+
+  .api-error > span {
+    display: grid;
+    flex: 0 0 auto;
+    place-items: center;
+    width: 1.4rem;
+    height: 1.4rem;
+    border: 1px solid currentColor;
+    border-radius: 50%;
+    font-weight: 800;
+  }
+
+  .api-error p {
+    margin: 0;
+    font-size: 0.78rem;
+  }
+
+  .panel,
+  .metric-card {
+    border: 1px solid var(--line);
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+
+  .ride-progress-panel {
+    padding: clamp(1rem, 3vw, 1.6rem);
+  }
+
+  .progress-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .progress-heading h2 {
+    margin: 0.5rem 0 0;
+    font-size: 1.65rem;
+    letter-spacing: -0.04em;
+  }
+
+  .progress-heading h2 span {
+    color: var(--muted);
+    font-size: 1rem;
+    font-weight: 500;
+  }
+
+  .ride-state {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--muted);
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  .ride-state .status-dot {
+    width: 0.45rem;
+    height: 0.45rem;
+    background: #7c8580;
+  }
+
+  .ride-state.active .status-dot {
+    background: var(--accent);
+    box-shadow: 0 0 0 4px rgb(202 239 89 / 11%);
+  }
+
+  .ride-state.finished {
+    color: var(--accent);
+  }
+
+  .route-progress {
+    margin-top: 2.3rem;
+    padding: 0 0.3rem;
+  }
+
+  .progress-track {
+    position: relative;
+    height: 0.45rem;
+    border-radius: 1rem;
+    background: #343c37;
+  }
+
+  .progress-fill {
+    height: 100%;
+    border-radius: inherit;
+    background: var(--accent);
+    transition: width 350ms ease;
+  }
+
+  .rider-marker {
+    position: absolute;
+    top: 50%;
+    display: grid;
+    place-items: center;
+    width: 1.65rem;
+    height: 1.65rem;
+    border: 2px solid var(--accent);
+    border-radius: 50%;
+    background: #222923;
+    color: var(--accent);
+    font-size: 0.58rem;
+    transform: translate(-50%, -50%);
+    transition: left 350ms ease;
+  }
+
+  .route-endpoints {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 0.8rem;
+    color: var(--muted);
+    font-size: 0.62rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+  }
+
+  .metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 0.8rem;
+    margin: 1rem 0;
+  }
+
+  .metric-card {
+    min-width: 0;
+    padding: 1rem;
+  }
+
+  .metric-card.speed-card {
+    background: var(--surface-raised);
+  }
+
+  .metric-label {
+    display: flex;
+    align-items: center;
+    gap: 0.45rem;
+    color: var(--muted);
+    font-size: 0.62rem;
+    font-weight: 800;
+    letter-spacing: 0.09em;
+  }
+
+  .metric-glyph {
+    color: var(--accent);
+    font-size: 0.95rem;
+  }
+
+  .metric-card > strong {
+    display: block;
+    margin-top: 1.35rem;
+    overflow: hidden;
+    font-size: clamp(1.35rem, 3vw, 2rem);
+    letter-spacing: -0.055em;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .metric-card > strong small {
+    margin-left: 0.3rem;
+    color: var(--muted);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0;
+  }
+
+  .metric-foot {
+    display: block;
+    margin-top: 0.45rem;
+    color: #77817b;
+    font-size: 0.55rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+  }
+
+  .controls-panel {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    padding: 1.3rem 1.5rem;
+  }
+
+  .controls-copy h2 {
+    margin: 0.45rem 0 0;
+    font-size: 1.1rem;
+  }
+
+  .controls-copy > p:last-child {
+    margin: 0.35rem 0 0;
+    color: var(--muted);
+    font-size: 0.74rem;
+  }
+
+  .control-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.55rem;
+  }
+
+  .button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: 2.55rem;
+    padding: 0.6rem 0.85rem;
+    border: 1px solid var(--line);
+    border-radius: 5px;
+    font: inherit;
+    font-size: 0.72rem;
+    font-weight: 750;
+    cursor: pointer;
+  }
+
+  .button:disabled {
+    cursor: not-allowed;
+    opacity: 0.4;
+  }
+
+  .button-start {
+    border-color: var(--accent);
+    background: var(--accent);
+    color: #192014;
+  }
+
+  .button-quiet,
+  .button-reset {
+    background: transparent;
+    color: var(--text);
+  }
+
+  .button-quiet:not(:disabled):hover,
+  .button-reset:not(:disabled):hover {
+    border-color: var(--accent);
+  }
+
+  .button-reset {
+    color: var(--muted);
+  }
+
+  .stop-note {
+    flex-basis: 100%;
+    margin: -0.5rem 0 0;
+    color: var(--muted);
+    font-size: 0.72rem;
+  }
+
+  .api-footnote {
+    margin: 0.8rem 0 0;
+    color: var(--muted);
+    font-size: 0.68rem;
+  }
+
+  .api-footnote code {
+    color: var(--accent);
+  }
+
+  @media (max-width: 900px) {
+    .metrics-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 600px) {
+    .page-heading {
+      align-items: flex-start;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .metrics-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .controls-panel {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .control-buttons {
+      width: 100%;
+    }
+
+    .control-buttons .button {
+      flex: 1 1 calc(50% - 0.55rem);
+    }
+  }
+}
