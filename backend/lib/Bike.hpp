@@ -28,7 +28,8 @@ public:
      */
     Bike(   const std::string modelName, const double bikeWeight, 
             const double dragCoefficient, const double driveTrainLosses,
-            const double airDens, const double gravity, const double crr);
+            const double airDens, const double gravity, const double crr,
+            const double headWind = 0.0);
     /// @brief Returns the bike mass in kilograms.
     double getWeight() const;
     /// @brief Returns the aerodynamic drag coefficient.

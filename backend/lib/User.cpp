@@ -167,6 +167,18 @@ void User::setCurrentSpeed(const double power) {
     currentSpeed = speedMs * 3.6;
 }
 
+void User::setProfile(const std::string& username,
+                      const double bodyWeight,
+                      const uint16_t bodyHeight,
+                      const Gender bodyGender,
+                      const double riderFrontalArea) {
+    name = username;
+    weight = bodyWeight;
+    height = bodyHeight;
+    gender = bodyGender;
+    frontalArea = riderFrontalArea;
+}
+
 void User::resetCurrentMotion() {
     currentPower = 0.0;
     currentSpeed = 0.0;

@@ -21,6 +21,15 @@ function createApiMock(initial: SimulationState | null = initialState) {
   const state = signal<SimulationState | null>(initial);
   return {
     state,
+    setPower: vi.fn((watts: number) => {
+      const current = state();
+      if (!current) {
+        return throwError(() => new HttpErrorResponse({ status: 0 }));
+      }
+      const next = { ...current, powerWatts: watts };
+      state.set(next);
+      return of(next);
+    }),
     getState: vi.fn(() => {
       const current = state();
       return current ? of(current) : throwError(() => new HttpErrorResponse({ status: 0 }));
@@ -32,8 +41,11 @@ function createApiMock(initial: SimulationState | null = initialState) {
       }
       const next: SimulationState = {
         ...current,
-        distanceKm: operation === 'reset' ? 0 : current.distanceKm,
-        powerWatts: operation === 'reset' ? 0 : current.powerWatts,
+        distanceKm: operation === 'reset' || operation === 'stop' ? 0 : current.distanceKm,
+        powerWatts:
+          operation === 'reset' || operation === 'stop' || operation === 'pause'
+            ? 0
+            : current.powerWatts,
         running: operation === 'start',
         finished: operation === 'reset' ? false : current.finished,
       };
@@ -77,7 +89,7 @@ describe('SimulationPage', () => {
     const button = (selector: string) =>
       fixture.nativeElement.querySelector(selector) as HTMLButtonElement;
 
-    button('.button-start').click();
+    button('.control-buttons .button-start').click();
     expect(api.control).toHaveBeenLastCalledWith('start');
     fixture.detectChanges();
     button('.button-quiet').click();
@@ -86,13 +98,12 @@ describe('SimulationPage', () => {
     button('.control-buttons button:nth-child(3)').click();
     expect(api.control).toHaveBeenLastCalledWith('stop');
     fixture.detectChanges();
-    expect(button('.button-start').disabled).toBe(true);
-    expect(fixture.nativeElement.textContent).toContain('The API stop operation exits its worker.');
+    expect(button('.control-buttons .button-start').disabled).toBe(false);
+    expect(fixture.nativeElement.textContent).toContain('The stop operation clears the ride progress.');
     button('.button-reset').click();
     expect(api.control).toHaveBeenLastCalledWith('reset');
     fixture.detectChanges();
-    expect(button('.button-start').disabled).toBe(true);
-    expect(fixture.nativeElement.textContent).toContain('restart the backend');
+    expect(button('.control-buttons .button-start').disabled).toBe(false);
     fixture.destroy();
   });
 
@@ -110,7 +121,7 @@ describe('SimulationPage', () => {
     button('.button-reset').click();
     fixture.detectChanges();
 
-    expect(button('.button-start').disabled).toBe(false);
+    expect(button('.control-buttons .button-start').disabled).toBe(false);
     fixture.destroy();
   });
 
@@ -127,6 +138,27 @@ describe('SimulationPage', () => {
       'Cannot reach the HomeTrainer API',
     );
     expect(fixture.nativeElement.textContent).toContain('—');
+    fixture.destroy();
+  });
+
+  it('applies ride-page slider power and formats elapsed time', async () => {
+    const api = createApiMock();
+    await TestBed.configureTestingModule({
+      imports: [SimulationPage],
+      providers: [provideRouter([]), { provide: SimulationApiService, useValue: api }],
+    }).compileComponents();
+    const fixture = TestBed.createComponent(SimulationPage);
+    fixture.detectChanges();
+
+    const slider = fixture.nativeElement.querySelector('#ride-power-slider') as HTMLInputElement;
+    slider.value = '325.5';
+    slider.dispatchEvent(new Event('input'));
+    fixture.componentInstance.applyPower();
+    fixture.componentInstance.elapsedSeconds.set(3661);
+    fixture.detectChanges();
+
+    expect(api.setPower).toHaveBeenCalledWith(325.5);
+    expect(fixture.nativeElement.textContent).toContain('01:01:01');
     fixture.destroy();
   });
 });

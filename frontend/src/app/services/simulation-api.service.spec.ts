@@ -50,6 +50,50 @@ describe('SimulationApiService', () => {
     expect(api.state()?.powerWatts).toBe(250.5);
   });
 
+  it('uploads a GPX file to the active-route endpoint', async () => {
+    const file = new File(['<gpx/>'], 'route.gpx', { type: 'application/gpx+xml' });
+    api.setRoute(file).subscribe();
+
+    const request = http.expectOne('/api/route');
+    expect(request.request.method).toBe('POST');
+    const uploadedFile = (request.request.body as FormData).get('file') as File;
+    expect(uploadedFile.name).toBe('route.gpx');
+    expect(await uploadedFile.text()).toBe('<gpx/>');
+    request.flush(sampleState);
+  });
+
+  it('sends rider and bike configuration to their endpoints', () => {
+    api.setUser({
+      name: 'Rider',
+      weightKg: 60,
+      heightCm: 170,
+      gender: 'MALE',
+      frontalAreaM2: 0.4,
+    }).subscribe();
+    const userRequest = http.expectOne('/api/config/user');
+    expect(userRequest.request.method).toBe('POST');
+    expect(userRequest.request.body).toEqual({
+      name: 'Rider',
+      weightKg: 60,
+      heightCm: 170,
+      gender: 'MALE',
+      frontalAreaM2: 0.4,
+    });
+    userRequest.flush(sampleState);
+
+    api.setBike({
+      weightKg: 8,
+      dragCoefficient: 0.32,
+      drivetrainLossPercent: 3.5,
+      airDensity: 1.225,
+      rollingResistance: 0.004,
+      headwindMs: 0,
+    }).subscribe();
+    const bikeRequest = http.expectOne('/api/config/bike');
+    expect(bikeRequest.request.method).toBe('POST');
+    bikeRequest.flush(sampleState);
+  });
+
   it.each(['start', 'pause', 'stop', 'reset'] as const)(
     'sends the %s control to its documented endpoint without a payload',
     (operation) => {

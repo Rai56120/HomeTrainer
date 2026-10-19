@@ -24,15 +24,17 @@ The frontend calls only endpoints documented in
 
 | UI action or data                                     | API request                                     |
 | ----------------------------------------------------- | ----------------------------------------------- |
-| Apply rider power                                     | `POST /api/control/power`                       |
+| Upload and activate a GPX route                      | `POST /api/route`                               |
+| Apply rider profile                                  | `POST /api/config/user`                         |
+| Apply bike and environment parameters                | `POST /api/config/bike`                         |
+| Apply ride power                                     | `POST /api/control/power`                       |
 | Read live speed, gradient, distance, power and status | `GET /api/state`                                |
+| Display active ride elapsed time                     | Measured locally while API state is running    |
 | Start, pause, stop or reset the ride                  | `POST /api/simulation/{start,pause,stop,reset}` |
 
-The current API does not accept a GPX upload or bike/environment configuration.
-The GPX picker only displays the chosen local filename, and those parameter
-fields remain local to the setup form; neither is sent to a placeholder route
-or applied to the simulation. The backend continues to use its configured
-route and simulation parameters until the API contract adds support.
+The simulation remains paused until the frontend sends the `start` request.
+GPX uploads are limited to 5 MiB. Rider and bike configuration changes are
+applied immediately and persist through a simulation reset.
 
 ## Build and tests
 

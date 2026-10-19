@@ -4,6 +4,7 @@
 #include <cstddef>
 #include <mutex>
 #include <thread>
+#include <string>
 
 #include "Route.hpp"
 #include "User.hpp"
@@ -45,6 +46,15 @@ public:
      * @param watts Requested rider power.
      */
     void setPower(double watts);
+    /** @brief Replaces the active route and resets progress to its beginning. */
+    void setRoute(Route routeValue);
+    /** @brief Updates rider parameters used by the physics model. */
+    void setUserProfile(const std::string& name, double weightKg, uint16_t heightCm,
+                        Gender gender, double frontalAreaM2);
+    /** @brief Replaces bike parameters used by the physics model. */
+    void setBikeParameters(double weightKg, double dragCoefficient,
+                           double drivetrainLossPercent, double airDensity,
+                           double rollingResistance, double headwindMs);
     /**
      * @brief Advances simulation state by a fixed time interval.
      * @param deltaSeconds Elapsed time in seconds; non-finite and non-positive values are ignored.
@@ -74,7 +84,7 @@ private:
 
     User user;
     User initialUser;
-    const Route& route;
+    Route route;
     double powerWatts = 0.0;
     std::size_t currentEdgeId = 0;
     bool paused = true;
@@ -82,6 +92,7 @@ private:
     bool finished = false;
 
     mutable std::mutex mutex;
+    std::mutex lifecycleMutex;
     std::condition_variable condition;
     std::thread worker;
 };

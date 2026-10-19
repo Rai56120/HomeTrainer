@@ -8,6 +8,13 @@ Route::Route(const std::string& file) {
     setFromGPX(file);
 }
 
+Route::Route(std::istream& gpxStream) {
+    totalDistance = 0.0;
+    elevationPlus = 0.0;
+    elevationMinus = 0.0;
+    setFromGPX(gpxStream);
+}
+
 Route::~Route() {
     // std::cout << "Route deleted" << std::endl;
 }
@@ -78,19 +85,21 @@ void Route::setFromGPX(const std::string& file) {
         return;
     }
 
+    setFromGPX(myGPX);
+}
+
+void Route::setFromGPX(std::istream& gpxStream) {
     std::string line;
     std::string rte;
     rte.reserve(1024);
     bool rteFlag = false;
 
-    while(getline(myGPX, line)) {
+    while(getline(gpxStream, line)) {
         if      (line.find("<trk>") != std::string::npos)  { rteFlag = true; continue; }
         else if (line.find("</trk>") != std::string::npos) { break; }
         else if (rteFlag)                             { rte.append(line); rte.push_back('\n'); }
     }
     
-    myGPX.close();
-
     size_t searchPos = 0;
     name = extractSubstring(rte, "<name>", "</name>", searchPos);
     searchPos = 0;

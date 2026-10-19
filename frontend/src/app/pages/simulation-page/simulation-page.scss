@@ -180,7 +180,7 @@ app-simulation-page {
 
   .metrics-grid {
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(3, minmax(0, 1fr));
     gap: 0.8rem;
     margin: 1rem 0;
   }
@@ -191,6 +191,10 @@ app-simulation-page {
   }
 
   .metric-card.speed-card {
+    background: var(--surface-raised);
+  }
+
+  .metric-card.time-card {
     background: var(--surface-raised);
   }
 
@@ -243,6 +247,58 @@ app-simulation-page {
     flex-wrap: wrap;
     gap: 1.5rem;
     padding: 1.3rem 1.5rem;
+  }
+
+  .power-control-panel {
+    margin-bottom: 1rem;
+    padding: 1.1rem 1.3rem;
+  }
+
+  .power-control-heading,
+  .power-control-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .power-control-heading h2 {
+    margin: 0.4rem 0 0;
+    font-size: 1rem;
+  }
+
+  .power-control-heading > strong {
+    font-size: 1.4rem;
+  }
+
+  .power-control-heading > strong small {
+    color: var(--muted);
+    font-size: 0.75rem;
+  }
+
+  .power-slider {
+    width: 100%;
+    margin: 1.2rem 0 0.5rem;
+    accent-color: var(--accent);
+  }
+
+  .power-control-footer .range-labels {
+    display: flex;
+    flex: 1;
+    justify-content: space-between;
+    color: var(--muted);
+    font-size: 0.62rem;
+  }
+
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
   }
 
   .controls-copy h2 {
@@ -322,7 +378,7 @@ app-simulation-page {
 
   @media (max-width: 900px) {
     .metrics-grid {
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+      grid-template-columns: repeat(2, minmax(0, 1fr));
     }
   }
 
@@ -338,6 +394,11 @@ app-simulation-page {
     }
 
     .controls-panel {
+      align-items: flex-start;
+      flex-direction: column;
+    }
+
+    .power-control-footer {
       align-items: flex-start;
       flex-direction: column;
     }

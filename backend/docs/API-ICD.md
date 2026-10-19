@@ -18,8 +18,9 @@ GPX file format.
 | Authentication | None |
 
 The executable binds to loopback (`127.0.0.1`) on port `8080`; it is not
-reachable from other machines by default. For requests with a body, clients
-should send `Content-Type: application/json`.
+reachable from other machines by default. JSON requests should send
+`Content-Type: application/json`. GPX uploads use `multipart/form-data` and
+are limited to 5 MiB.
 
 ## 3. Common Response Data
 
@@ -99,6 +100,52 @@ The error message is specific to the validation failure. Invalid JSON returns
 `{"error":"request body must be valid JSON"}`; a missing, non-numeric, or
 non-object `watts` value returns `{"error":"watts must be a number"}`.
 
+### `POST /api/route`
+
+Uploads and activates a GPX track. The request must be `multipart/form-data`
+with a file field named `file`. The GPX must contain at least two track points.
+A successful upload resets route progress and returns the current simulation
+state. Invalid or empty routes return `400 Bad Request`.
+
+### `POST /api/config/user`
+
+Updates the rider parameters used by the physics model. Updates are immediate;
+the request does not change the current route progress.
+
+```json
+{
+  "name": "Rider",
+  "weightKg": 60,
+  "heightCm": 170,
+  "gender": "MALE",
+  "frontalAreaM2": 0.4
+}
+```
+
+`name` must contain 1–80 characters, `weightKg` must be in 1–300,
+`heightCm` must be an integer in 50–250, `gender` must be `MALE` or `FEMALE`,
+and `frontalAreaM2` must be in 0–2. Invalid values return `400 Bad Request`.
+
+### `POST /api/config/bike`
+
+Updates the bike and environmental parameters used by the physics model.
+Updates are immediate and the request returns the simulation state.
+
+```json
+{
+  "weightKg": 8,
+  "dragCoefficient": 0.32,
+  "drivetrainLossPercent": 3.5,
+  "airDensity": 1.225,
+  "rollingResistance": 0.004,
+  "headwindMs": 0
+}
+```
+
+Accepted ranges are weight 0–50 kg, drag coefficient 0–1.5,
+drivetrain losses 0–100%, air density 0–10 kg/m³, rolling resistance
+0–0.5, and headwind -100–100 m/s. Invalid values return `400 Bad Request`.
+
 ### Simulation controls
 
 Each operation is a `POST` request with no required body. Each returns
@@ -106,10 +153,10 @@ Each operation is a `POST` request with no required body. Each returns
 
 | Endpoint | Effect |
 | --- | --- |
-| `POST /api/simulation/start` | Starts or resumes simulation updates unless the route is finished. |
+| `POST /api/simulation/start` | Starts the worker on first request or resumes updates unless the route is finished. The executable does not start the simulation at startup. |
 | `POST /api/simulation/pause` | Pauses updates and sets `speedKmh` and `powerWatts` to zero while preserving route progress; the simulation can be resumed with `start`. |
-| `POST /api/simulation/stop` | Requests the simulation worker to exit, resets route progress, and sets `speedKmh`, `powerWatts`, and `distanceKm` to zero. This is not equivalent to `pause`; do not rely on `start` resuming after `stop`. |
-| `POST /api/simulation/reset` | Restores the rider and route position, restores the power value captured when the API server was created, and pauses the simulation. |
+| `POST /api/simulation/stop` | Requests the simulation worker to exit, resets route progress, and sets `speedKmh`, `powerWatts`, and `distanceKm` to zero. A later `start` request creates a new worker. |
+| `POST /api/simulation/reset` | Resets rider motion and route progress, sets power to zero, and pauses the simulation. Current route and rider/bike configuration remain active. |
 
 ## 5. Error Handling
 

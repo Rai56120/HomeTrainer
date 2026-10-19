@@ -23,6 +23,41 @@ void Simulation::setPower(const double watts) {
     powerWatts = std::max(0.0, watts);
 }
 
+void Simulation::setRoute(Route routeValue) {
+    std::lock_guard<std::mutex> lock(mutex);
+    route = std::move(routeValue);
+    user.resetCoveredDistance();
+    currentEdgeId = 0;
+    finished = route.getAllSegments().empty();
+    if(!finished) {
+        user.setCurrentGradient(route.getEdge(0).getGradient());
+    }
+}
+
+void Simulation::setUserProfile(const std::string& name,
+                                const double weightKg,
+                                const uint16_t heightCm,
+                                const Gender gender,
+                                const double frontalAreaM2) {
+    std::lock_guard<std::mutex> lock(mutex);
+    user.setProfile(name, weightKg, heightCm, gender, frontalAreaM2);
+    initialUser.setProfile(name, weightKg, heightCm, gender, frontalAreaM2);
+}
+
+void Simulation::setBikeParameters(const double weightKg,
+                                   const double dragCoefficient,
+                                   const double drivetrainLossPercent,
+                                   const double airDensity,
+                                   const double rollingResistance,
+                                   const double headwindMs) {
+    std::lock_guard<std::mutex> lock(mutex);
+    const auto bike = std::make_shared<Bike>(
+        "Custom", weightKg, dragCoefficient, drivetrainLossPercent / 100.0,
+        airDensity, 9.80665, rollingResistance, headwindMs);
+    user.setBike(bike);
+    initialUser.setBike(bike);
+}
+
 void Simulation::tick(const double deltaSeconds) {
     if(!std::isfinite(deltaSeconds) || deltaSeconds <= 0.0) {
         return;
@@ -49,8 +84,20 @@ void Simulation::tickLocked(const double deltaSeconds) {
 }
 
 void Simulation::start() {
-    std::lock_guard<std::mutex> lock(mutex);
+    std::lock_guard<std::mutex> lifecycleLock(lifecycleMutex);
+    std::unique_lock<std::mutex> lock(mutex);
     if(finished) {
+        return;
+    }
+
+    if(worker.joinable() && stopRequested) {
+        lock.unlock();
+        worker.join();
+        lock.lock();
+        stopRequested = false;
+        paused = false;
+        worker = std::thread(&Simulation::run, this);
+        condition.notify_all();
         return;
     }
 
@@ -65,11 +112,12 @@ void Simulation::start() {
 void Simulation::pause() {
     std::lock_guard<std::mutex> lock(mutex);
     paused = true;
-    powerWatts = 0.0;
-    user.resetCurrentMotion();
+    // powerWatts = 0.0;
+    // user.resetCurrentMotion();
 }
 
 void Simulation::stop() {
+    std::lock_guard<std::mutex> lifecycleLock(lifecycleMutex);
     {
         std::lock_guard<std::mutex> lock(mutex);
         stopRequested = true;
@@ -84,6 +132,9 @@ void Simulation::stop() {
         }
     }
     condition.notify_all();
+    if(worker.joinable()) {
+        worker.join();
+    }
 }
 
 void Simulation::reset() {
@@ -92,14 +143,13 @@ void Simulation::reset() {
     currentEdgeId = 0;
     finished = route.getAllSegments().empty();
     paused = true;
-    stopRequested = false;
-
     if(!finished) {
         user.setCurrentGradient(route.getEdge(0).getGradient());
     }
 }
 
 void Simulation::join() {
+    std::lock_guard<std::mutex> lifecycleLock(lifecycleMutex);
     if(worker.joinable()) {
         worker.join();
     }

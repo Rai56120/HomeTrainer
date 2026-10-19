@@ -16,10 +16,18 @@ const sampleState: SimulationState = {
 };
 
 describe('SetupPage', () => {
-  let api: { setPower: ReturnType<typeof vi.fn> };
+  let api: {
+    setRoute: ReturnType<typeof vi.fn>;
+    setUser: ReturnType<typeof vi.fn>;
+    setBike: ReturnType<typeof vi.fn>;
+  };
 
   beforeEach(async () => {
-    api = { setPower: vi.fn().mockReturnValue(of(sampleState)) };
+    api = {
+      setRoute: vi.fn().mockReturnValue(of(sampleState)),
+      setUser: vi.fn().mockReturnValue(of(sampleState)),
+      setBike: vi.fn().mockReturnValue(of(sampleState)),
+    };
     await TestBed.configureTestingModule({
       imports: [SetupPage],
       providers: [provideRouter([]), { provide: SimulationApiService, useValue: api }],
@@ -31,7 +39,6 @@ describe('SetupPage', () => {
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
 
-    expect(compiled.querySelector('#power-slider')?.getAttribute('max')).toBe('500.5');
     expect(compiled.querySelector('[formControlName="bikeWeightKg"]')?.getAttribute('max')).toBe(
       '20',
     );
@@ -48,7 +55,7 @@ describe('SetupPage', () => {
     expect(compiled.textContent).toContain('Drive train losses');
   });
 
-  it('shows local-only rider profile fields without sending them to the API', () => {
+  it('applies rider and bike profile fields to the API', () => {
     const fixture = TestBed.createComponent(SetupPage);
     fixture.detectChanges();
     const compiled = fixture.nativeElement as HTMLElement;
@@ -58,11 +65,26 @@ describe('SetupPage', () => {
     expect(compiled.querySelector('[formControlName="userHeightCm"]')).not.toBeNull();
     expect(compiled.querySelector('[formControlName="userGender"]')).not.toBeNull();
     expect(compiled.querySelector('[formControlName="frontalAreaM2"]')).not.toBeNull();
-    expect(compiled.textContent).toContain('not sent to the current API');
-    expect(api.setPower).not.toHaveBeenCalled();
+    fixture.componentInstance.applyConfiguration();
+
+    expect(api.setUser).toHaveBeenCalledWith({
+      name: 'Rider',
+      weightKg: 60,
+      heightCm: 170,
+      gender: 'MALE',
+      frontalAreaM2: 0.4,
+    });
+    expect(api.setBike).toHaveBeenCalledWith({
+      weightKg: 8,
+      dragCoefficient: 0.32,
+      drivetrainLossPercent: 3.5,
+      airDensity: 1.225,
+      rollingResistance: 0.004,
+      headwindMs: 0,
+    });
   });
 
-  it('keeps a selected GPX local and does not send unsupported setup to the API', () => {
+  it('uploads a selected GPX file to change the active route', () => {
     const fixture = TestBed.createComponent(SetupPage);
     fixture.detectChanges();
     const input = fixture.nativeElement.querySelector('#route-file') as HTMLInputElement;
@@ -72,8 +94,8 @@ describe('SetupPage', () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.textContent).toContain('training-loop.gpx');
-    expect(fixture.nativeElement.textContent).toContain('not uploaded or used by the simulation');
-    expect(api.setPower).not.toHaveBeenCalled();
+    fixture.componentInstance.uploadRoute();
+    expect(api.setRoute).toHaveBeenCalledWith(file);
   });
 
   it('rejects non-GPX files with an accessible message', () => {
@@ -90,17 +112,4 @@ describe('SetupPage', () => {
     );
   });
 
-  it('applies slider power through the documented API action', () => {
-    const fixture = TestBed.createComponent(SetupPage);
-    fixture.detectChanges();
-    const component = fixture.componentInstance;
-    component.form.controls.powerWatts.setValue(222.5);
-    component.applyPower();
-    fixture.detectChanges();
-
-    expect(api.setPower).toHaveBeenCalledWith(222.5);
-    expect(fixture.nativeElement.querySelector('[role="status"]')?.textContent).toContain(
-      'Power set to 222.5 W.',
-    );
-  });
 });

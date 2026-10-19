@@ -66,6 +66,9 @@ public:
      * Without an assigned bike, current speed is set to zero.
      */
     void setCurrentSpeed(const double power);
+    /** @brief Updates the rider attributes used by the simulation model. */
+    void setProfile(const std::string& username, double bodyWeight, uint16_t bodyHeight,
+                    Gender bodyGender, double riderFrontalArea);
     /** @brief Sets current speed and power to zero without recalculating physics. */
     void resetCurrentMotion();
     /**

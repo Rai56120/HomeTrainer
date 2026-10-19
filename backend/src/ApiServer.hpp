@@ -22,7 +22,7 @@ nlohmann::json serializeSimulationState(const SimulationState& state);
  */
 bool parsePowerCommand(const httplib::Request& request, double& watts, std::string& error);
 
-/** @brief Exposes simulation state and controls through a small HTTP JSON API. */
+/** @brief Exposes simulation state, route uploads, configuration, and controls over HTTP. */
 class ApiServer {
 public:
     /**
@@ -41,7 +41,7 @@ public:
     void stop();
 
 private:
-    /** @brief Registers health, state, power-control, and simulation-control endpoints. */
+    /** @brief Registers state, route, configuration, power, and simulation-control endpoints. */
     void configureRoutes();
     /**
      * @brief Writes the current simulation snapshot as a JSON HTTP response.

@@ -129,6 +129,39 @@
       </strong>
       <span class="metric-foot">RIDER OUTPUT</span>
     </article>
+    <article class="metric-card time-card">
+      <div class="metric-label"><span class="metric-glyph" aria-hidden="true">◷</span> TIME</div>
+      <strong>{{ formattedElapsedTime }}</strong>
+      <span class="metric-foot">ELAPSED RIDE TIME</span>
+    </article>
+  </section>
+
+  <section class="panel power-control-panel" aria-labelledby="power-control-title">
+    <div class="power-control-heading">
+      <div>
+        <p class="field-caption">RIDER EFFORT</p>
+        <h2 id="power-control-title">Target power</h2>
+      </div>
+      <strong>{{ displayedPowerWatts | number: '1.0-1' }} <small>W</small></strong>
+    </div>
+    <label class="visually-hidden" for="ride-power-slider">Power in watts</label>
+    <input
+      id="ride-power-slider"
+      class="power-slider"
+      type="range"
+      min="0"
+      max="500.5"
+      step="0.1"
+      [ngModel]="displayedPowerWatts"
+      (input)="updatePower($event)"
+      [disabled]="pending()"
+    />
+    <div class="power-control-footer">
+      <div class="range-labels"><span>0 W</span><span>500.5 W</span></div>
+      <button class="button button-start" type="button" (click)="applyPower()" [disabled]="pending()">
+        {{ pending() ? 'Applying…' : 'Apply power' }}
+      </button>
+    </div>
   </section>
 
   <section class="panel controls-panel" aria-labelledby="controls-title">
@@ -142,7 +175,7 @@
         class="button button-start"
         type="button"
         (click)="control('start')"
-        [disabled]="pending() || state?.running || state?.finished || stopped()"
+        [disabled]="pending() || state?.running || state?.finished"
       >
         <span aria-hidden="true">▶</span> {{ state?.running ? 'Riding' : 'Start ride' }}
       </button>
@@ -173,8 +206,7 @@
     </div>
     @if (stopped()) {
       <p class="stop-note">
-        The API stop operation exits its worker. Reset clears the ride, but restart the backend
-        before starting another session.
+        The stop operation clears the ride progress. Start again to begin a fresh run on this route.
       </p>
     }
   </section>

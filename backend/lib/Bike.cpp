@@ -2,10 +2,12 @@
 
 Bike::Bike( const std::string modelName, const double bikeWeight, 
             const double dragCoefficient, const double driveTrainLosses,
-            const double airDens, const double gravity, const double crr)
+            const double airDens, const double gravity, const double crr,
+            const double headWind)
          :  model(modelName), weight(bikeWeight), 
             dragCoef(dragCoefficient), lDriveTrain(driveTrainLosses),
-            airDensity(airDens), gravityConstant(gravity), rollingResistCoef(crr) {}
+            airDensity(airDens), headWindSpeed(headWind),
+            gravityConstant(gravity), rollingResistCoef(crr) {}
 
 double Bike::getWeight() const {
     return weight;

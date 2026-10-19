@@ -56,6 +56,8 @@ private:
      * @param file Path to the GPX file.
      */
     void setFromGPX(const std::string& file);
+    /** @brief Loads track metadata and geometry from an open GPX stream. */
+    void setFromGPX(std::istream& gpxStream);
 
 public:
     /**
@@ -65,6 +67,8 @@ public:
      * the route has no segments.
      */
     Route(const std::string& file);
+    /** @brief Loads a route from an already-open GPX stream. */
+    explicit Route(std::istream& gpxStream);
     /** @brief Destroys the route and its stored geometry. */
     ~Route();
 

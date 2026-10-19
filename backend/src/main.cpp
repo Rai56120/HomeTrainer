@@ -1,8 +1,8 @@
 #include "main.hpp"
 
-/** @brief Starts the route simulation and serves its control API until the server exits. */
+/** @brief Serves the route simulation API until the server exits. */
 int main() {
-    cout << fixed << setprecision(4);
+    // cout << fixed << setprecision(4);
 
     Route circuit(std::string(HOME_TRAINER_RESOURCE_DIR) + "/ninian_bourg.gpx");
     std::shared_ptr<Bike> bike = std::make_shared<Bike>(
@@ -12,12 +12,10 @@ int main() {
     User user("Yoann", 60.0, 170, "MALE", FRONTAL_AREA);
     user.setBike(bike);
 
-    circuit.printRoute();
-    user.printInfos();
+    // circuit.printRoute();
+    // user.printInfos();
 
     Simulation simulation(user, circuit);
-    simulation.setPower(CURRENT_POWER);
-    simulation.start();
 
     ApiServer apiServer(simulation);
     apiServer.run("127.0.0.1", 8080);

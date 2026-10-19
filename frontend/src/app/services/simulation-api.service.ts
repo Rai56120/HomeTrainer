@@ -6,6 +6,23 @@ import { SimulationState } from '../models/simulation-state';
 export type ApiConnection = 'unknown' | 'connected' | 'offline';
 export type SimulationControl = 'start' | 'pause' | 'stop' | 'reset';
 
+export interface UserConfiguration {
+  name: string;
+  weightKg: number;
+  heightCm: number;
+  gender: 'MALE' | 'FEMALE';
+  frontalAreaM2: number;
+}
+
+export interface BikeConfiguration {
+  weightKg: number;
+  dragCoefficient: number;
+  drivetrainLossPercent: number;
+  airDensity: number;
+  rollingResistance: number;
+  headwindMs: number;
+}
+
 @Injectable({ providedIn: 'root' })
 export class SimulationApiService {
   private readonly http = inject(HttpClient);
@@ -19,6 +36,20 @@ export class SimulationApiService {
 
   setPower(watts: number): Observable<SimulationState> {
     return this.withState(this.http.post<SimulationState>('/api/control/power', { watts }));
+  }
+
+  setRoute(file: File): Observable<SimulationState> {
+    const body = new FormData();
+    body.append('file', file, file.name);
+    return this.withState(this.http.post<SimulationState>('/api/route', body));
+  }
+
+  setUser(configuration: UserConfiguration): Observable<SimulationState> {
+    return this.withState(this.http.post<SimulationState>('/api/config/user', configuration));
+  }
+
+  setBike(configuration: BikeConfiguration): Observable<SimulationState> {
+    return this.withState(this.http.post<SimulationState>('/api/config/bike', configuration));
   }
 
   control(operation: SimulationControl): Observable<SimulationState> {

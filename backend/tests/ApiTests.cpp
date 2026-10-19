@@ -90,6 +90,7 @@ TEST_CASE("REST server exposes health, state, and power control") {
     const auto state = client.Get("/api/state");
     REQUIRE(state);
     REQUIRE(state->status == 200);
+    CHECK(nlohmann::json::parse(state->body).at("running") == false);
 
     const auto power = client.Post(
         "/api/control/power", R"({"watts":300})", "application/json");
@@ -108,6 +109,71 @@ TEST_CASE("REST server exposes health, state, and power control") {
     CHECK(overflow->status == 400);
     CHECK(nlohmann::json::parse(overflow->body).at("error") ==
           "watts must be a finite non-negative number");
+
+    const auto userUpdate = client.Post(
+        "/api/config/user",
+        R"({"name":"Updated rider","weightKg":72.5,"heightCm":182,"gender":"FEMALE","frontalAreaM2":0.44})",
+        "application/json");
+    REQUIRE(userUpdate);
+    CHECK(userUpdate->status == 200);
+
+    const auto invalidUser = client.Post(
+        "/api/config/user",
+        R"({"name":"Rider","weightKg":72.5,"heightCm":182.5,"gender":"FEMALE","frontalAreaM2":0.44})",
+        "application/json");
+    REQUIRE(invalidUser);
+    CHECK(invalidUser->status == 400);
+
+    const auto bikeUpdate = client.Post(
+        "/api/config/bike",
+        R"({"weightKg":9.1,"dragCoefficient":0.35,"drivetrainLossPercent":4,"airDensity":1.2,"rollingResistance":0.005,"headwindMs":-1.5})",
+        "application/json");
+    REQUIRE(bikeUpdate);
+    CHECK(bikeUpdate->status == 200);
+
+    const std::string gpx =
+        "<gpx version=\"1.1\">\n"
+        "<trk>\n"
+        "<name>Uploaded route</name>\n"
+        "<trkseg>\n"
+        "<trkpt lat=\"48.000000\" lon=\"-2.000000\"><ele>10.0</ele></trkpt>\n"
+        "<trkpt lat=\"48.002000\" lon=\"-2.000000\"><ele>10.0</ele></trkpt>\n"
+        "</trkseg>\n"
+        "</trk>\n"
+        "</gpx>\n";
+    const httplib::MultipartFormDataItems routeUpload = {
+        {"file", gpx, "uploaded.gpx", "application/gpx+xml"}
+    };
+    const auto routeUpdate = client.Post("/api/route", routeUpload);
+    REQUIRE(routeUpdate);
+    REQUIRE(routeUpdate->status == 200);
+    CHECK(nlohmann::json::parse(routeUpdate->body).at("routeDistanceKm").get<double>() > 0.2);
+
+    const httplib::MultipartFormDataItems invalidRouteUpload = {
+        {"file", "<gpx><trk></trk></gpx>", "empty.gpx", "application/gpx+xml"}
+    };
+    const auto invalidRoute = client.Post("/api/route", invalidRouteUpload);
+    REQUIRE(invalidRoute);
+    CHECK(invalidRoute->status == 400);
+
+    const auto start = client.Post("/api/simulation/start", "", "application/json");
+    REQUIRE(start);
+    REQUIRE(start->status == 200);
+    CHECK(nlohmann::json::parse(start->body).at("running") == true);
+    const auto stopped = client.Post("/api/simulation/stop", "", "application/json");
+    REQUIRE(stopped);
+    REQUIRE(stopped->status == 200);
+    const auto stoppedState = nlohmann::json::parse(stopped->body);
+    CHECK(stoppedState.at("speedKmh") == doctest::Approx(0.0));
+    CHECK(stoppedState.at("powerWatts") == doctest::Approx(0.0));
+    CHECK(stoppedState.at("distanceKm") == doctest::Approx(0.0));
+
+    const auto restart = client.Post("/api/simulation/start", "", "application/json");
+    REQUIRE(restart);
+    CHECK(nlohmann::json::parse(restart->body).at("running") == true);
+    const auto stopAgain = client.Post("/api/simulation/stop", "", "application/json");
+    REQUIRE(stopAgain);
+    CHECK(stopAgain->status == 200);
 
     const auto reset = client.Post("/api/simulation/reset", "", "application/json");
     REQUIRE(reset);
