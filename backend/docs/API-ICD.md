@@ -17,10 +17,11 @@ GPX file format.
 | Success response content type | `application/json` |
 | Authentication | None |
 
-The executable binds to loopback (`127.0.0.1`) on port `8080`; it is not
-reachable from other machines by default. JSON requests should send
-`Content-Type: application/json`. GPX uploads use `multipart/form-data` and
-are limited to 5 MiB.
+The executable binds to loopback (`127.0.0.1`) on port `8080` by default; it
+is not reachable from other machines by default. Set `HOME_TRAINER_HOST` to
+override the bind address (for example, `0.0.0.0` in a container). JSON
+requests should send `Content-Type: application/json`. GPX uploads use
+`multipart/form-data` and are limited to 5 MiB.
 
 ## 3. Common Response Data
 

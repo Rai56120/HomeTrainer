@@ -1,5 +1,7 @@
 #include "main.hpp"
 
+#include <cstdlib>
+
 /** @brief Serves the route simulation API until the server exits. */
 int main() {
     // cout << fixed << setprecision(4);
@@ -18,7 +20,8 @@ int main() {
     Simulation simulation(user, circuit);
 
     ApiServer apiServer(simulation);
-    apiServer.run("127.0.0.1", 8080);
+    const char* host = std::getenv("HOME_TRAINER_HOST");
+    apiServer.run(host == nullptr ? "127.0.0.1" : host, 8080);
 
     simulation.stop();
     simulation.join();
